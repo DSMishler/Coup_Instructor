@@ -36,6 +36,7 @@ Instructions:
 # 'b' appears in the file
 # This shouldn't be hard-coded. You should be printing from a variable!
 # Don't forget to close the file when you're done!
+# Note: you're allowed to look at how the file was generated if you want
 
 
 # Problem 3
@@ -90,6 +91,8 @@ Instructions:
     # one `dog_day.txt`
 # Recommendation: implement this as a `day` method.
 # Recommendation: defensive programming
+# Note: there are many ways to solve this question. You can add more to the
+#       `dog` class, but you must have at least what was listed.
 
 
 # Problem 5
