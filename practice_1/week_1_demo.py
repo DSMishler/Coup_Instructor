@@ -55,8 +55,18 @@ Created on Mon May 30 10:18:14 2022
     # data
     # methods
     # example: cat
-        # go_away
-        # feed
-        # play
+        # restlessness
+        # hunger
+        # go_away()
+        # feed()
+        # play()
 # importing stuff
     # random
+    # There are other ways
+        # from `a` import `b`
+        # from `a` import *
+        # import `a` as `c`
+    # How are random numbers generated?
+
+# Practice announced
+# How do you know you're doing well?
