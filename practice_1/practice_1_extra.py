@@ -30,3 +30,5 @@ Created on Thu May 26 14:49:42 2022
 # How about going outside?
 # How about eating?
 # How about napping?
+# Test over 100 days:
+# How many hours long is the dog's day on average?

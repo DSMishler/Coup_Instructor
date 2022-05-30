@@ -29,9 +29,12 @@ Instructions:
 # Problem 1
 # Print a random whole number in the range of [1,10] (inclusive)
 
-
-
 # Problem 2
+# Print all of the perfect squares in the range of [1,10000]
+# Note: you should use a loop (100 print statements will get you 0 points),
+#       but you don't have to use 'for i in range(10000)' as your statement
+
+# Problem 3
 # Open the file `abab.txt` and print the total number of times the character
 # 'b' appears in the file
 # This shouldn't be hard-coded. You should be printing from a variable!
@@ -39,13 +42,13 @@ Instructions:
 # Note: you're allowed to look at how the file was generated if you want
 
 
-# Problem 3
+# Problem 4
 # Open the file `abab.txt` and print the following:
     # the longest sequence of 'a's in the file
     # the longest sequence of 'b's in the file
 
 
-# Problem 4
+# Problem 5
 # Make a `dog` class that has the following data:
     # hunger (an integer that starts at 5)
     # manicness (an integer that starts at 3)
@@ -93,8 +96,3 @@ Instructions:
 # Recommendation: defensive programming
 # Note: there are many ways to solve this question. You can add more to the
 #       `dog` class, but you must have at least what was listed.
-
-
-# Problem 5
-# Test over 100 days:
-# How many hours long is the dog's day on average?
