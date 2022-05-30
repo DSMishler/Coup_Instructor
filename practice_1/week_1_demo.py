@@ -12,6 +12,11 @@ Created on Mon May 30 10:18:14 2022
     # Grading
     # Availability
     # How do you know you're learning?
+# Github
+    # Why github?
+    # How to use?
+        # commit, push
+        # github desktop makes it easy
 # The terminal:
     # 'print'
     # variables
