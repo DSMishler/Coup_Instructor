@@ -137,3 +137,10 @@ readFile.close()
 import random
 
 print(random.randint(0,10))
+
+
+# Tips for homework 1
+for character in "hello":
+    print(character)
+    if(character == "l"):
+        print("character was an l")
