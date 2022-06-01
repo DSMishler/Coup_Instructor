@@ -75,3 +75,65 @@ Created on Mon May 30 10:18:14 2022
 
 # Practice announced
 # How do you know you're doing well?
+
+
+
+a = 1
+b = 2
+c = a + b
+print(c)
+a = 6
+print(c)
+print(a)
+print(a)
+
+
+if(a < c):
+    print("True")
+else:
+    print("You got caught lackin'")
+    
+
+
+'''
+while(1 == 1):
+    print("hello world")
+    # maybe there's many lines...
+    # click terminal and Ctrl+C to stop a program
+'''
+
+a = 0
+while(a < 10):
+    print("hello world")
+    a = a + 1
+    # think of = as a <-
+
+
+myList = ["apples", "oranges"]
+
+for item in myList:
+    print(item)
+    
+for i in range(10):
+    print(i, end="")
+    print(" sqaured is ", end="")
+    print(i*i)
+
+
+# open: takes file name and one more letter:
+    # w: write
+    # r: read
+    # a: append
+
+myFile = open("newfile.txt", "a")
+myFile.write("this is appended text!")
+myFile.close()
+
+readFile = open("newfile.txt", "r")
+print(readFile.read())
+readFile.close()
+
+
+import random
+
+print(random.randint(0,10))
