@@ -19,13 +19,13 @@ Created on Mon May 30 10:18:14 2022
         # github desktop makes it easy
 # The terminal:
     # 'print'
-    # variables
+    # variables (if I type anything that's not reserved, it's a variable)
         # int
         # bool
         # str
         # float (we won't use these much)
         # list
-    # assignment
+    # assignment (=) (think of it more like a left arrow <-)
     # Golden Rule #1:
 """
         only that which you specifically changed shall change
@@ -40,6 +40,7 @@ Created on Mon May 30 10:18:14 2022
 """
     # Unless you're dead sure the code you've written is correct, it's always
     # a good idea to double check stuff.
+    # Change, Predict, Check
 # Conditionals
     # if
     # else
@@ -85,14 +86,19 @@ print(c)
 a = 6
 print(c)
 print(a)
-print(a)
 
 
+# < is not the only thing
+# We've got...
+# <=
+# >=
+# != (not equal to)
+# == (equal to)
 if(a < c):
     print("True")
 else:
     print("You got caught lackin'")
-    
+
 
 
 '''
@@ -101,6 +107,7 @@ while(1 == 1):
     # maybe there's many lines...
     # click terminal and Ctrl+C to stop a program
 '''
+
 
 a = 0
 while(a < 10):
@@ -113,30 +120,34 @@ myList = ["apples", "oranges"]
 
 for item in myList:
     print(item)
-    
+
+
+
 for i in range(10):
-    print(i, end="")
-    print(" sqaured is ", end="")
-    print(i*i)
+    print(i, "sqaured is", i*i)
 
 
 # open: takes file name and one more letter:
-    # w: write
+    # w: write (over-write)
     # r: read
     # a: append
 
+
 myFile = open("newfile.txt", "a")
-myFile.write("this is appended text!")
+myFile.write(" this is appended text!")
 myFile.close()
+
 
 readFile = open("newfile.txt", "r")
 print(readFile.read())
 readFile.close()
 
 
+
 import random
 
 print(random.randint(0,10))
+
 
 
 # Tips for homework 1
