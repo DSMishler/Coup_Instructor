@@ -6,7 +6,48 @@ Created on Thu May 26 14:49:42 2022
 """
 
 
+
 # Problem 5
+# Background: Random numbers are generated in the following way:
+    # An initial global random number is chosen. That is called the 'seed'.
+    # Then, a periodic function has that number switch to another number
+    # in the range of [0, RAND_MAX]. Usually, RAND_MAX is 2**32-1. This means
+    # that the number will switch to some number in the range [0,4294967295]
+    # and that all 4294967296 numbers will be visited before the seed returns
+    # to its initial value.
+    # When you ask for a random number between, say, 1 and 2, Python will
+    # sent the seed to its next value, then if the seed was odd, say,
+    # Python will return you a 2. If it was even, say,
+    # Python will return you a 1. You can think of this generation as
+    # "coloring" the possible range that the seed might occupy.
+    # This is a clever way to shrink the large range to give you seemingly
+    # random numbers in a small range.
+    # Try it for yourself! This code will generate the same random numbers
+    # every time! On my machine, they are: `7, 10, 12`
+import random
+random.seed(66)
+print(random.randint(6,16))
+print(random.randint(6,16))
+print(random.randint(6,16))
+
+# Problem:
+# Find a seed that gets the code over in generate_random.py
+# to make a file that match thees following output:
+"""
+15
+27
+36
+10
+"""
+# Hint: you may want to create a script that checks many seeds for you
+# Note: do not change randfile.txt, but you can copy+paste the code over here
+#       if you wish
+
+
+
+
+
+# Problem 6
 # Make a `dog` class that has the following data:
     # hunger (an integer that starts at 5)
     # manicness (an integer that starts at 3)
@@ -55,25 +96,8 @@ Created on Thu May 26 14:49:42 2022
 # Note: there are many ways to solve this question. You can add more to the
 #       `dog` class, but you must have at least what was listed.
 
-# Problem 1
-# Find a seed that gets this code to match the following output:
-# Hint: you may want to create a script that checks many seeds for you first.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Problem 7 (continuing problem 6)
 # How many times should you expect the dog will want to play each day?
 # How about going outside?
 # How about eating?
