@@ -24,7 +24,9 @@ Instructions:
     - Follow the problem specifications that follow and make a python
       document that can run without any errors
     - If you want some extra practice, proceed to the extra practice document
-    - 
+    - For a hope score, push your homework to github by Sunday at 8:00 PM
+        - If you submit after that, it's fine, but you get 0 marks if
+          I grade and don't find your homework
 """
 
 # Problem 1
