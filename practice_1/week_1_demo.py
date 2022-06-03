@@ -78,7 +78,6 @@ Created on Mon May 30 10:18:14 2022
 # How do you know you're doing well?
 
 
-
 a = 1
 b = 2
 c = a + b
@@ -98,7 +97,8 @@ if(a < c):
     print("True")
 else:
     print("You got caught lackin'")
-
+    
+# `elif` is the official `else if`
 
 
 '''
@@ -107,6 +107,7 @@ while(1 == 1):
     # maybe there's many lines...
     # click terminal and Ctrl+C to stop a program
 '''
+
 
 
 a = 0
@@ -122,9 +123,9 @@ for item in myList:
     print(item)
 
 
-
 for i in range(10):
     print(i, "sqaured is", i*i)
+
 
 
 # open: takes file name and one more letter:
@@ -139,7 +140,8 @@ myFile.close()
 
 
 readFile = open("newfile.txt", "r")
-print(readFile.read())
+fileText = readFile.read()
+print(fileText)
 readFile.close()
 
 
@@ -147,7 +149,6 @@ readFile.close()
 import random
 
 print(random.randint(0,10))
-
 
 
 # Tips for homework 1
