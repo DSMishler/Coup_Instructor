@@ -181,6 +181,8 @@ def incorrect_function_3():
     # one `dog_day.txt`
 # Recommendation: implement this as a `day` method.
 # Recommendation: defensive programming
+# Note: if you have questions about what should happen first in an hour,
+#       check things *in the order that I specified them*
 # Note: there are many ways to solve this question. You can add more to the
 #       `dog` class, but you must have at least what was listed.
 
