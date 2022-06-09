@@ -199,3 +199,10 @@ Problem 6 is optional
 # How about napping?
 # Test over 100 days:
 # How many hours long is the dog's day on average?
+
+"""
+extra practice just for Anton
+"""
+# Write a function that takes minutes and seconds as arguments
+#       returns: a floating-point number which is that quantity in minute
+#       example: to_minutes(18,23) would return 18.38333
