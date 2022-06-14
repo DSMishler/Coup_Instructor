@@ -20,9 +20,10 @@ Created on Tue Jun 14 09:38:45 2022
 
 
 
-
-
-
+"""
+It is crucial that you follow the conventions of the game file so that your
+coup agents can play with other hosts
+"""
 
 
 
