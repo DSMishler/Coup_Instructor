@@ -89,7 +89,6 @@ problem_2_tester()
         # `True` if `test_function` was one of the `correct_function`s
         # `False` if `test_function` was one of the `incorrect_function`s
 
-
 def correct_function_1():
     return random.randint(1,4) * 8
 
@@ -130,6 +129,15 @@ def incorrect_function_3():
         # shuffles the deck
         # hint: use your trusty internet capabilities to find out what
         #       `random.shuffle()` does
+
+class Deck():
+    def __init__(self):
+        self.cards = []
+    def add(self, card):
+        self.cards.append(card)
+    def show(self):
+        print(self.cards)
+
 
 
 # Note: you *will* use this deck for Coup later on
