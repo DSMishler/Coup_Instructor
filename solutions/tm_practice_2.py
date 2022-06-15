@@ -2,7 +2,7 @@
 """
 Created on Thu Jun  2 15:05:32 2022
 
-@author: Daniel Mishler
+@author: Thomas Mishler. Endorsed by Daniel Mishler
 """
 
 """
@@ -36,7 +36,14 @@ import random
 # problem 1
 # write a function that takes two integers as an argument
 # and returns their product. Call it whetever you would like
-
+def dumb_mult (a,b):
+    if a is not int:
+        print("Error, expected first argument to be integer")
+        return
+    if b is not int:
+        print("Error, expected second argument to be integer")
+        return
+    return a*b
 
 # problem 2
 # fix up the below function to pass the tester
@@ -47,7 +54,11 @@ import random
 #       some comments. You should be able to figure it out nonetheless.
 
 def mystery_function(a):
-    return None
+    #returns true if a is an even number
+    if a % 2 == 0:
+        return True
+    else:
+        return False
 
 def problem_2_tester():
     for i in range(20):
@@ -89,6 +100,7 @@ problem_2_tester()
         # `True` if `test_function` was one of the `correct_function`s
         # `False` if `test_function` was one of the `incorrect_function`s
 
+
 def correct_function_1():
     return random.randint(1,4) * 8
 
@@ -107,7 +119,25 @@ def incorrect_function_2():
 def incorrect_function_3():
     return random.randint(18,88) * 18 + 3
 
+def tester_function(test_function):
+    a = test_function()
+    if(a % 8 == 0):
+        return True
+    else: 
+        return False
 
+if tester_function(correct_function_1):
+    print("Look")
+if tester_function(correct_function_2):
+    print("here")
+if tester_function(correct_function_3):
+    print("The")
+if not tester_function(incorrect_function_1):
+    print("tester")
+if not tester_function(incorrect_function_2):
+    print("is")
+if not tester_function(incorrect_function_3):
+    print("working")
 
 
 
@@ -115,7 +145,7 @@ def incorrect_function_3():
 
 
 # Problem 4
-# write a class called `Deck`
+# write a class called `self.deck`
 # with data
     # `cards` : initialized to an empty list
 # and methods
@@ -130,19 +160,25 @@ def incorrect_function_3():
         # hint: use your trusty internet capabilities to find out what
         #       `random.shuffle()` does
 
-class Deck():
-    def __init__(self):
-        self.cards = []
-    def add(self, card):
-        self.cards.append(card)
-    def show(self):
-        print(self.cards)
-
-
 
 # Note: you *will* use this deck for Coup later on
+''' Epic '''
+class Deck:
+    def __init__(self, cards=[]):
+        self.deck = cards
+    def add(self,newcard):
+        if type(newcard) == str:
+            self.deck.append(newcard)
+        else:
+            print('new card must be str')
+    def show(self):
+        for i in (self.deck):
+            print(i)
+    def shuffle(self):
+        random.shuffle(self.deck) #wow that's OP
 
-
+cardlist = ['A1','A2','A3','A4']
+dek = Deck(cardlist)
 
 # Problem 5
 # Make a `dog` class that has the following data:
@@ -189,11 +225,75 @@ class Deck():
     # one `dog_day.txt`
 # Recommendation: implement this as a `day` method.
 # Recommendation: defensive programming
-# Note: if you have questions about what should happen first in an hour,
-#       check things *in the order that I specified them*
 # Note: there are many ways to solve this question. You can add more to the
 #       `dog` class, but you must have at least what was listed.
-
+class Dog:
+    def __init__(self,hunger=5,manicness=3,bathroom=2,tiredness=0):
+        self.hunger =hunger
+        self.manicness = manicness
+        self.bathroom = bathroom
+        self.tiredness = tiredness
+        self.actions = []
+        self.awake = True
+    def status(self):
+        print('\n')
+        print('Hunger is ' + str(self.hunger))
+        print('Manicness is ' + str(self.manicness))
+        print('Bathroom is ' + str(self.bathroom))
+        print('Tiredness is ' + str(self.tiredness))
+    def hour(self):
+        #HUNGER CHECK
+        self.hunger = self.hunger + random.randint(1,4)
+        if self.hunger >10:
+            self.hunger=0
+            #THE DOG EATS
+            self.actions.append('The dog eats')
+            
+        #MANICNESS CHECK
+        self.manicness = self.manicness + random.randint(-2,5)
+        if self.manicness > 10:
+            self.manicness = 3
+            self.tiredness = self.tiredness + 2
+            #THE DOG PLAYS
+            self.actions.append('The dog plays')
+        
+        #NAP CHECK
+        if self.manicness < 1:
+            self.manicness = 3
+            self.tiredness += -1
+            #THE DOG NAPS
+            self.actions.append('The dog naps')
+            
+        #BATHROOM CHECK
+        self.bathroom = self.bathroom + random.randint(2,4)
+        if self.bathroom >= 10:
+            self.bathroom = 0
+            #THE DOG POO
+            self.actions.append('The dog goes out')
+        
+        #RESET CHECK
+        self.tiredness += random.randint(1,2)
+        if self.tiredness >= 26:
+            self.hunger=5
+            self.manicness=3
+            self.bathroom=2
+            self.tiredness=0
+            #THE DOG RESET
+            self.actions.append('The dog goes to bed')
+            self.awake = False
+    def day(self):
+        self.actions=(['The dog wakes up'])
+        self.awake = True
+        while self.awake:
+            self.hour()
+        doglog = open("dog_day.txt", "w")
+        for i in self.actions:
+            doglog.write(i+'\n')
+        doglog.close() #protect the file
+        
+mika = Dog()
+mika.day()
+        
 
 
 
@@ -207,10 +307,3 @@ Problem 6 is optional
 # How about napping?
 # Test over 100 days:
 # How many hours long is the dog's day on average?
-
-"""
-extra practice just for Anton
-"""
-# Write a function that takes minutes and seconds as arguments
-#       returns: a floating-point number which is that quantity in minute
-#       example: to_minutes(18,23) would return 18.38333

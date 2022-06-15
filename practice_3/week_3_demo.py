@@ -6,6 +6,17 @@ Created on Tue Jun 14 09:38:45 2022
 @author: dsmishler
 """
 
+# Preliminaries
+    # Push to github! Otherwise I can't even see what you've tried
+    # It's good practice to push your code to github every time you stop coding
+        # Even if you're not done yet!
+    # Practice 2
+        # I notice that I'm the author of a lot of your code,
+        # please change that so you can preserve a shareable deliverable
+    # Don't know coup?
+        # https://youtu.be/a8bY3zI9FL4
+        # https://youtu.be/lPlBDZnxHQA
+# Go to https://github.com/DSMishler/Coup_Instructor and follow along
 
 # We made it here. Here's what we know:
     # variables
@@ -16,6 +27,7 @@ Created on Tue Jun 14 09:38:45 2022
     # classes
 # How do we build coup?
     # Defensive programming
+
 
 
 
