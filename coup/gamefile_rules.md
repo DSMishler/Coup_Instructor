@@ -18,23 +18,23 @@ there will be no spaces in player names and action/reaction names.
 
 
 ```
-Players: [A, B, C, D]
-A tax
-B tax
-C steal A
-D steal C
-A assassinate C
-C discard contessa
-B assassinate D
-D discard duke
-C tax
-D tax
-A tax
-B tax
-C assassinate D
-A tax
+players: [a, b, c, d]
+a tax
+b tax
+c steal a
+d steal c
+a assassinate c
+c discard contessa
+b assassinate d
+d discard duke
+c tax
+d tax
+a tax
+b tax
+c assassinate d
+a tax
 ... # many more lines
-A winner
+winner: a
 ```
 
 Notice that player D was skipped when he was eliminated. Eliminated players
