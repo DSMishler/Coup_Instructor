@@ -80,7 +80,6 @@ Michael, Philip, and Thomas can skip problem 1 if they wish
             # Arguments: the names of the players
             # Initializes the deck with 15 cards(they can all be dukes for now)
             # Give each player 2 cards and 2 coins
-            # open the gamefile (call it "coup_game_test.coup")
         # turn()
             # Determine the active player, and prompt them for an action
             # Process one action, such as "a tax" or "markus steal daniel"
@@ -90,6 +89,8 @@ Michael, Philip, and Thomas can skip problem 1 if they wish
             # Update player cards and coins accordingly
         # game()
             # initialize a game and call turn() until the game is over
+            # write the game log to a gamefile
+                # by default, call it "coup_game_test.coup"
 # Play a FFA game with 3 players and submit the file in your practice_3
 # directory (since your Game_Master class lives in another directory)
 
