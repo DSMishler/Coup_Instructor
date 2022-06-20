@@ -18,6 +18,18 @@ Created on Tue Jun 14 09:38:45 2022
         # https://youtu.be/lPlBDZnxHQA
 # Go to https://github.com/DSMishler/Coup_Instructor and follow along
 
+# Game file:
+"""
+mike foreign_aid
+philip block
+philip tax
+mike challenge
+philip discard contessa
+mike tax
+philip discard assassin
+winner: mike
+"""
+
 # We made it here. Here's what we know:
     # variables
     # conditionals
@@ -55,7 +67,11 @@ coup agents can play with other hosts
         # cards
         # coins
         # act()
+            # It's your turn: what do you do?
         # react() ### Not needed now
+            # Swap and I have to put one on top
+            # I got coup-ed
+            # Do I want to challenge?
     # Game_Master
         # players
         # gamefile

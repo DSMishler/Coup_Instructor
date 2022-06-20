@@ -55,6 +55,13 @@ Michael, Philip, and Thomas can skip problem 1 if they wish
     # act()
         # If you have fewer than 7 coins, tax. Else, coup another player
         # You might have to parse the log to find another active player's name.
+        # When I say "tax", I mean this method should return the string "tax"
+        # or "coup markus"
+        # don't forget that the first line of a log will be the list of
+        # players playing the game!
+    # receive()
+        # arguments: a message
+        # add that message to the log
 
 
 # Problem 4
@@ -66,14 +73,16 @@ Michael, Philip, and Thomas can skip problem 1 if they wish
 # Build a class Game_Master in coup.py
     # Data:
         # players
-        # gamefile (file opened by game_init() and closed when the game ends)
+        # log (just like the players)
         # deck
     # Methods:
         # game_init() (Note, this is *not* the __init__ function)
             # Arguments: the names of the players
-            # Initializes the deck with 5 cards (they can all be dukes for now)
+            # Initializes the deck with 15 cards(they can all be dukes for now)
             # Give each player 2 cards and 2 coins
+            # open the gamefile (call it "coup_game_test.coup")
         # turn()
+            # Determine the active player, and prompt them for an action
             # Process one action, such as "a tax" or "markus steal daniel"
             # Check to see whether that action was valid
             # Write that action to a gamefile and each player's log
