@@ -14,7 +14,7 @@ class Player:
         self.log = ""
         self.coins = 0
         self.cards = []
-    def act(self):
+    def turn(self):
         print("your cards: ", self.cards)
         print("your coins: ", self.coins)
         print("so far:")
@@ -23,6 +23,9 @@ class Player:
         return action
     
     def react(self, hint):
+        if hint == "turn":
+            return self.turn()
+        # else
         print("reaction time: hint ", hint)
         print("your hand:", self.cards)
         reaction = input("reaction: ")

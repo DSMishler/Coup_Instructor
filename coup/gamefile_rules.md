@@ -56,12 +56,16 @@ just look at the last line to see who won.
 
 
 
-
-(below will be completed before week 4's class)
-
 Add challenging and blocking:
 
-Players: [A, B, C, ...] # Max 6. In turn order.
-A tax # First player's action
-B challenge A # Other players have a chance to block or challenge
-B discard duke # the loser of the challenge discards a card
+Players: [a, b, c, ...] # Max 6. In turn order.
+a tax # First player's action
+b challenge # Other players have a chance to block or challenge
+b discard captain # the loser of the challenge discards a card
+    # It is inferred that player a must have replaced his card
+b tax # Second player's action
+a challenge
+b discard ambassador # this time, the challenger won the challenge
+    # It is inferred that player b is eliminated. On turn 2!
+c tax
+...

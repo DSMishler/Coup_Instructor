@@ -45,20 +45,25 @@ The legal actions/reactions (inclusive) are:
 - block\_assassin
 - block\_foregin\_aid
 - challenge
-- discard # Note: also used for inferring the winner of a challenge
+
+Other things you might see in the gamefile are:
+- players: # The first line of the file to tell you who is playing
+- discard  # Note: also used for inferring the winner of a challenge
+- winner:  # Just for who won the game
 
 The actions marked *like so* require targets. All others do not require targets.
 
 ### Are actions case sensitive?
 
-Everything in the Coup gamefile should be lowercase. If you accept that,
+Everything in the Coup gamefile should be *lowercase*. If you accept that,
 I'm happy. If you want to make your gamefile accept uppercase names, that's
 fine, but your coup Game\_Master should only output files with all lowercase.
 
 ### Should I check to count cards in a game file?
 
 You could, but I'm only going to throw something like that at the advanced
-students
+students. You can assume that all game files are valid unless something says
+otherwise.
 
 
 ## 1v1 Play
@@ -131,3 +136,48 @@ immediately eliminated.
 
 Yes. Your steal will only take the number of coins that player has
 remaining. Possibly zero.
+
+### Do I have to claim how to block a steal with captain or ambassador?
+
+No. If you block a steal and are challenged, you may reveal a captain
+*or* an ambassador and you will win the challenge. This may not be the
+way that the rules portray blocking of steals, but this is the way *our*
+`Game_Master` will handle it.
+
+## My player agent
+
+### How does my player interact with the `Game_Master` class?
+
+Your player can interact with `Game_Master` in a few ways
+
+#### receive()
+
+A method that takes a string as an argument. Every time the game master
+writes something to the game log, the game master will also broadcast it to
+its players via this method. You ought to store it in a log, and maintain that
+information however you want.
+
+#### react()
+
+When your player needs to do something, the game master will communicate via
+this method to your player. It will provide a hint as an argument
+to your player about what it might want to do:
+
+- "turn": it is your turn and you must choose an action
+- "discard": you must discard a card because you lost a challenge or were 
+            successfully assassinated or coup-ed
+- "placeback": you must place a card back (during an ambassador excahnge)
+- "challenged": you must reveal a card from your hand as a result
+            of being challenged
+- "cb?": someone performed an action that was challengeable or blockable.
+         It might be only challengeable, only blockable, or both. You must
+         either challenge, block, or pass.
+
+#### show()
+
+It's just a good idea to have a function that shows your player's cards
+
+### How does my player know how to interact with other players?
+
+This 'history' recording will be big for week 6. However, we will be doing it
+by managing a file '(playername).player'

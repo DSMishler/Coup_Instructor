@@ -69,7 +69,7 @@ class Player:
         self.log = ""
         self.coins = 0
         self.cards = []
-    def act(self):
+    def turn(self):
         if self.coins < 7:
             return "tax"
         else:
@@ -77,6 +77,8 @@ class Player:
             return "coup" + " " + target
     
     def react(self, hint):
+        if hint == "turn":
+            return self.turn()
         if hint == "discard":
             discard_me = self.cards[0]
             return discard_me
@@ -118,15 +120,14 @@ class Player:
         self.log += message
         self.log += "\n"
 
-    def show_all(self):
+    def show(self, show_cards = False):
         print("player", self.name)
-        print("cards:", self.cards)
+        if show_cards:
+            print("cards:", self.cards)
+        else:
+            print("cards:", len(self.cards))
         print("coins:", self.coins)
     
-    def show_limited(self):
-        print("player", self.name)
-        print("cards:", len(self.cards))
-        print("coins:", self.coins)
 
 class Game_Master:
     def __init__(self):
@@ -135,19 +136,18 @@ class Game_Master:
         self.active_player_name = ""
         self.log = ""
         self.deck = Deck()
-    def game_init(self, player_names):
+    def game_init(self, players):
         # You can check for duplicate player names if you're worried about
         # people fiddling with the game
-        if(len(player_names) < 2):
+        if(len(players) < 2):
             print("Error: game must be played with at least 2 players")
-        if(len(player_names) > 6):
+        if(len(players) > 6):
             print("Error: game must be played with at most 6 players")
-        
-        for player_name in player_names:
-            if player_name == "me":
-                self.players.append(human_player.Player(player_name))
-            else:
-                self.players.append(Player(player_name))
+
+        self.active_player_names = []
+        for player in players:
+            self.active_player_names.append(player.name)
+            self.players.append(player)
         
         self.deck.coup_cards()
         
@@ -158,11 +158,10 @@ class Game_Master:
             player.cards = [self.deck.draw(), self.deck.draw()]
         
         first_message = "players: "
-        first_message += str(player_names)
+        first_message += str(self.active_player_names)
         first_message = first_message.replace("'","")
         
         self.broadcast(first_message)
-        self.active_player_names = player_names.copy()
         self.active_player_name = self.active_player_names[0]
         # Don't know what .copy() does?
         # TL;DR - you probably don't need it, *but*
@@ -174,7 +173,7 @@ class Game_Master:
 
     def turn(self):
         active_player = self.name_to_player(self.active_player_name)
-        action = active_player.act()
+        action = active_player.react("turn")
         message = self.active_player_name + " " + action
         self.broadcast(message)
         # Next week we have to insert challenge and block architecture here
@@ -201,10 +200,7 @@ class Game_Master:
         print("Coup game")
         print("players:", len(self.players))
         for player in self.players:
-            if show_cards:
-                player.show_all()
-            else:
-                player.show_limited()
+            player.show(show_cards)
             print()
         print("game so far:")
         print(self.log)
@@ -322,6 +318,13 @@ def double_list(mylist):
 
 
 
-common_players = ["trey", "boo"]
+humanPlayer = human_player.Player("me")
+trey = Player("trey")
+boo = Player("boo")
+
+
+common_players = [trey, boo]
 gm = Game_Master()
 gm.game(common_players)
+
+me_players = [humanPlayer, trey]
