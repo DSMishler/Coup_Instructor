@@ -163,13 +163,7 @@ class Game_Master:
         
         self.broadcast(first_message)
         self.active_player_name = self.active_player_names[0]
-        # Don't know what .copy() does?
-        # TL;DR - you probably don't need it, *but*
-        # active_players is a mutable, meaning that it's a special kind of
-        # variable that *does* remember what it was set to a while ago
-        # if a = b + c, then you change c, a will not change. But if the
-        # variable a was a mutable, then a *would* change. This .copy()
-        # makes active_players not behave like a mutable.
+
 
     def turn(self):
         active_player = self.name_to_player(self.active_player_name)
@@ -186,6 +180,8 @@ class Game_Master:
             target_name = None
         else:
             print("Error: invalid action returned")
+        
+        # TODO: Check if action was legal
         
         self.handle_action(self.active_player_name, action, target_name)
 
@@ -294,8 +290,8 @@ class Game_Master:
             print("action not implemented:", player_name, action, target)
 
 
-    def game(self, player_names, fname = "coup_game_test.coup"):
-        self.game_init(player_names)
+    def game(self, players, fname = "coup_game_test.coup"):
+        self.game_init(players)
         while len(self.active_player_names) > 1:
             self.turn()
         message = "winner: " + self.active_player_name

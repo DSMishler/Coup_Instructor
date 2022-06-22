@@ -1,11 +1,16 @@
-players: [me, trey]
-me steal trey
+players: [trey, boo]
 trey tax
-me assassinate trey
-trey discard assassin
+boo tax
 trey tax
-me steal trey
+boo tax
+trey coup boo
+boo discard captain
+boo coup trey
+trey discard ambassador
 trey tax
-me assassinate trey
-trey discard contessa
-winner: me
+boo tax
+trey tax
+boo tax
+trey coup boo
+boo discard ambassador
+winner: trey
