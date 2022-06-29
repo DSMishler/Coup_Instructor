@@ -1,16 +1,16 @@
-players: [trey, boo]
+players: [me, trey]
+me tax
 trey tax
-boo tax
+me tax
 trey tax
-boo tax
-trey coup boo
-boo discard captain
-boo coup trey
-trey discard ambassador
+me coup trey
+trey discard assassin
+trey coup me
+me discard duke
+me tax
 trey tax
-boo tax
+me tax
 trey tax
-boo tax
-trey coup boo
-boo discard ambassador
-winner: trey
+me coup trey
+trey discard captain
+winner: me
