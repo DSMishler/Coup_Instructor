@@ -245,7 +245,6 @@ class Game_Master:
             response_legal = self.is_response_legal(action, target_name)
             target_legal = self.is_target_legal(target_name)
             action_legal = self.is_action_legal(active_player, action)
-            print(action_legal)
             
             legal = (action_exists and response_legal and
                      target_legal and action_legal)
