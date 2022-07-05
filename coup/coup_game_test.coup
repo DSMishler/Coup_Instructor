@@ -1,18 +1,16 @@
 players: [me, trey]
 me tax
 trey tax
-me steal trey
+me tax
 trey tax
 me coup trey
-trey discard captain
-trey tax
-me tax
+trey discard duke
 trey coup me
-me discard assassin
+me discard captain
 me tax
 trey tax
-me steal trey
+me tax
 trey tax
-me coup trey
-trey discard contessa
-winner: me
+me challenge
+me discard contessa
+winner: trey

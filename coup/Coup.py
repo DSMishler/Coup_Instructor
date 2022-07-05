@@ -29,6 +29,22 @@ coup_actions = [
     "challenge"
     ]
 
+turn_actions = [
+    "income",
+    "foreign_aid",
+    "coup",
+    "tax",
+    "steal",
+    "exchange",
+    "assassinate"
+    ]
+
+actions_requiring_target = [
+    "coup",
+    "steal",
+    "assassinate"
+    ]
+
 respondable_actions = [
     "foreign_aid",
     "tax",
@@ -38,6 +54,27 @@ respondable_actions = [
     "block_steal",
     "block_assassinate",
     "block_foreign_aid",
+    ]
+
+challengeable_actions = [
+    "tax",
+    "steal",
+    "exchange",
+    "assassinate",
+    "block_steal",
+    "block_assassinate",
+    "block_foreign_aid",
+    ]
+
+blockable_actions = [
+    "foreign_aid",
+    "steal",
+    "assassinate"
+    ]
+
+singly_blockable_actions = [
+    "steal",
+    "assassinate"
     ]
 
 card_abilities = {
@@ -187,23 +224,50 @@ class Game_Master:
 
 
     def turn(self):
-        active_player = self.name_to_player(self.active_player_name)
-        action = active_player.react("turn")
-        message = self.active_player_name + " " + action
+        legal = False
+        while legal == False:
+            active_player = self.name_to_player(self.active_player_name)
+            action = active_player.react("turn")
+            message = self.active_player_name + " " + action
+    
+            
+            
+            split_action = action.split()
+            if len(split_action) == 2:
+                action = split_action[0]
+                target_name = split_action[1]
+            elif len(split_action) == 1:
+                target_name = None
+            else:
+                print("Error: invalid action returned")
+            
+            action_exists = (action in turn_actions)
+            response_legal = self.is_response_legal(action, target_name)
+            target_legal = self.is_target_legal(target_name)
+            action_legal = self.is_action_legal(active_player, action)
+            print(action_legal)
+            
+            legal = (action_exists and response_legal and
+                     target_legal and action_legal)
+            # If all were legal, fall through. Else go back to start, and
+            # ask again
+            if not legal:
+                print("illegal action: " + message)
+                if not action_exists:
+                    print("reason: that action isn't possible in Coup.")
+                elif not response_legal:
+                    print("reason: response length not correct.")
+                    print("    Either needed a target and didn't have")
+                    print("    or had a target and didn't need one")
+                elif not target_legal:
+                    print("reason: invalid target")
+                elif not action_legal:
+                    print("reason: your coin total forbids you from doing it")
+                else:
+                    print("programmer error") # Control should never reach here
+                print("asking again...")
+            
         self.broadcast(message)
-
-        
-        
-        split_action = action.split()
-        if len(split_action) == 2:
-            action = split_action[0]
-            target_name = split_action[1]
-        elif len(split_action) == 1:
-            target_name = None
-        else:
-            print("Error: invalid action returned")
-        
-        # TODO: Check if action was legal
         
         # There are 4 possibilities below:
             # 1 - the action is not blocked and not challenged
@@ -213,10 +277,11 @@ class Game_Master:
         challenged = False # successfully challenged
         blocked = False # attempted to be blocked
         if action in respondable_actions:
-            reactions = self.get_table_reactions(self.active_player_name)
+            reactions = self.get_table_reactions(self.active_player_name,
+                                                 action,
+                                                 target_name)
             # first, see if someone wanted to block. Blocking takes precedence
             # over challenging.
-            # TODO: Check if block was legal
             blockers = self.get_players_who("block", reactions)
             if len(blockers) == 0:
                 blocked = False
@@ -226,7 +291,9 @@ class Game_Master:
                 blocking_action = "block" + "_" + action
                 message = blocker + " " + blocking_action
                 self.broadcast(message)
-                reactions = self.get_table_reactions(blocker)
+                reactions = self.get_table_reactions(blocker,
+                                                     blocking_action,
+                                                     None)
                 blocked = True
                 # if someone blocked the first time, then anyone who wanted
                 # to challenge the first time is ignored. They are given the
@@ -249,7 +316,8 @@ class Game_Master:
                     challenged_player_name = self.active_player_name
                     challenged_action = action
                 challenged_player = self.name_to_player(challenged_player_name)
-                shown_card = challenged_player.react("challenged")
+                shown_card = self.react_hand_wrapper(challenged_player,
+                                                     "challenged")
                 challenged_player.cards.remove(shown_card)
                 if challenged_action in card_abilities[shown_card]:
                     # Then the challenger loses, challenged wins
@@ -257,7 +325,8 @@ class Game_Master:
                     self.deck.shuffle()
                     challenged_player.cards.append(self.deck.draw())
                     challenging_player = self.name_to_player(challenger)
-                    discarded_card = challenging_player.react("discard")
+                    discarded_card = (
+                       self.react_hand_wrapper(challenging_player, "discard"))
                     challenging_player.cards.remove(discarded_card)
                     message = challenger + " discard " + discarded_card
                     if len(challenging_player.cards) == 0:
@@ -330,21 +399,48 @@ class Game_Master:
     def advance_active_player(self):
         # note to students: there are *lots* of better ways to do this and
         # I encourage you to take them up
+        # TODO: fix the bug if a nonactive player is eliminated!
         ap_index = self.active_player_names.index(self.active_player_name)
         ap_index += 1
         if ap_index == len(self.active_player_names):
             ap_index = 0
         self.active_player_name = self.active_player_names[ap_index]
 
-    def get_table_reactions(self, player_to_exclude=None):
+    # This wrapper also checks legality of each response
+    def get_table_reactions(self, actor, action, target):
+        player_to_exclude = actor
         players_to_ask = self.active_player_names.copy()
         if player_to_exclude is not None:
             players_to_ask.remove(player_to_exclude)
         reactions = []
         for player_name in players_to_ask:
             player = self.name_to_player(player_name)
-            reaction = player.react("cb?")
+            legal = False
+            while legal == False:
+                reaction = player.react("cb?")
+                
+                if reaction not in ["challenge", "block", "pass"]:
+                    print("illegal reaction '%s'. " % reaction, end="")
+                    print("Must be challenge, block, or pass")
+                    continue
+                if reaction == "block":
+                    if action not in blockable_actions:
+                        print("illegal reaction: cannot block a %s." % action)
+                        continue
+                    if action in singly_blockable_actions:
+                        if player_name != target:
+                            print("illegal reaction: ", end = "")
+                            print("only the target of a %s may block" % action)
+                            continue
+                if reaction == "challenge":
+                    if action not in challengeable_actions:
+                        print("illegal reaction: ", end = "")
+                        print("%s may not be challenged" % action)
+                        continue
+                # If we made it here, we fall through
+                legal = True
             reactions.append(player_name + " " + reaction)
+            
         return reactions
 
     def get_players_who(self, response, reactions_list):
@@ -375,7 +471,7 @@ class Game_Master:
         elif action == "coup":
             player.coins -= 7
             if self.player_alive(target.name):
-                discarded_card = target.react("discard")
+                discarded_card = self.react_hand_wrapper(target, "discard")
                 message = target_name + " discard " + discarded_card
                 target.cards.remove(discarded_card)
                 self.broadcast(message)
@@ -384,7 +480,7 @@ class Game_Master:
         elif action == "assassinate":
             player.coins -= 3
             if self.player_alive(target.name):
-                discarded_card = target.react("discard")
+                discarded_card = self.react_hand_wrapper(target, "discard")
                 message = target_name + " discard " + discarded_card
                 target.cards.remove(discarded_card)
                 self.broadcast(message)
@@ -395,7 +491,7 @@ class Game_Master:
             player.cards.append(self.deck.draw())
             
             for i in range(2):
-                placeback_card = player.react("placeback")
+                placeback_card = self.react_hand_wrapper(player, "placeback")
                 # no message here to broadcast: this information is private
                 player.cards.remove(placeback_card)
                 self.deck.insert(placeback_card)
@@ -403,6 +499,47 @@ class Game_Master:
         else:
             print("action not implemented:", player_name, action, target)
 
+    def is_response_legal(self, action, target):
+        if action in actions_requiring_target:
+            if target is None:
+                return False
+            else:
+                return True
+        else:
+            if target is None:
+                return True
+            else:
+                return False
+    
+    def is_action_legal(self, player, action):
+        if player.coins >= 10:
+            if action != "coup":
+                return False
+        elif action == "coup":
+            if player.coins < 7:
+                return False
+        elif action == "assassinate":
+            if player.coins < 3:
+                return False
+        return True
+
+    def is_target_legal(self, target_name):
+        if target_name is None:
+            return True
+        elif target_name in self.active_player_names:
+            return True
+        else:
+            return False
+
+    def react_hand_wrapper(self, player, hint):
+        legal = False
+        while legal == False:
+            returned_card = player.react(hint)
+            if returned_card not in player.cards:
+                print("illegal return: not a card in your hand")
+            else:
+                legal = True
+        return returned_card
 
     def game(self, players, fname = "coup_game_test.coup"):
         self.game_init(players)
