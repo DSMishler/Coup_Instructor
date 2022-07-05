@@ -9,5 +9,5 @@ Created on Thu Jun 23 13:48:47 2022
 # show with an example whether or not a dictionary is mutable in python
 
 
-# Problem 2
+# Build the "Beef" agent, just like how we built Markus in class.
 #

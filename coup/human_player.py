@@ -14,22 +14,48 @@ class Player:
         self.log = ""
         self.coins = 0
         self.cards = []
-    def turn(self):
-        print("your cards: ", self.cards)
-        print("your coins: ", self.coins)
-        print("so far:")
-        print(self.log)
-        action = input("your turn: ")
-        return action
     
     def react(self, hint):
         if hint == "turn":
-            return self.turn()
-        # else
-        print("reaction time: hint ", hint)
-        print("your hand:", self.cards)
-        reaction = input("reaction: ")
-        return reaction
+            reaction = input("your turn: ")
+            while reaction == "show":
+                print("your cards: ", self.cards)
+                print("your coins: ", self.coins)
+                print("so far:")
+                print(self.log)
+                reaction = input("your turn: ")
+            return reaction
+        elif hint == "discard":
+            reaction = input("discard: ")
+            while reaction == "show":
+                print("you must discard")
+                print("your hand:", self.cards)
+                reaction = input("discard: ")
+            return reaction
+        elif hint == "placeback":
+            reaction = input("placeback: ")
+            while reaction == "show":
+                print("you must placeback from your exchange")
+                print("your hand:", self.cards)
+                reaction = input("placeback: ")
+            return reaction
+        elif hint == "challenged":
+            reaction = input("challenged: ")
+            while reaction == "show":
+                print("you must choose a card to respond to the challenge")
+                print("your hand:", self.cards)
+                reaction = input("challenged: ")
+            return reaction
+        elif hint == "cb?":
+            reaction = input("challenge or block?: ")
+            while reaction == "show":
+                print("you must choose to challenge, block, or pass.")
+                print("your hand:", self.cards)
+                reaction = input("challenge or block?: ")
+            return reaction
+        else:
+            print("uknown hint '%s'" % hint)
+            return "?"
         
     def find_active_target(self):
         # Find all the players

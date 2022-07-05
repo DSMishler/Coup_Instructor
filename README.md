@@ -42,7 +42,7 @@ The legal actions/reactions (inclusive) are:
 - exchange
 - *assassinate*
 - block\_steal
-- block\_assassin
+- block\_assassinate
 - block\_foregin\_aid
 - challenge
 
@@ -143,6 +143,12 @@ No. If you block a steal and are challenged, you may reveal a captain
 *or* an ambassador and you will win the challenge. This may not be the
 way that the rules portray blocking of steals, but this is the way *our*
 `Game_Master` will handle it.
+
+### What if I steal from someone, but they are eliminated via a challenge?
+
+This could happen if you steal from someone with 1 card and they fail in
+a challenge to your steal or if someone succeeds in a challenge to their block.
+You would still get their coins.
 
 ## My player agent
 

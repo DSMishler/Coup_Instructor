@@ -5,9 +5,6 @@ Created on Mon Jun 20 13:06:02 2022
 @author: Daniel Mishler
 """
 
-# Dear student:
-    # Good job on finding this file. You are welcome to look at the file.
-    # I won't stop you or punish you for your curiosity.
 # Recommendations:
     # Try to do something on your own for 10 mintues before getting ideas from
     # this file.
@@ -20,17 +17,36 @@ import human_player
 
 coup_actions = [
     "income",
-    "foregin_aid",
+    "foreign_aid",
     "coup",
     "tax",
     "steal",
     "exchange",
     "assassinate",
     "block_steal",
-    "block_assassin",
-    "block_foregin_aid",
+    "block_assassinate",
+    "block_foreign_aid",
     "challenge"
     ]
+
+respondable_actions = [
+    "foreign_aid",
+    "tax",
+    "steal",
+    "exchange",
+    "assassinate",
+    "block_steal",
+    "block_assassinate",
+    "block_foreign_aid",
+    ]
+
+card_abilities = {
+    "duke" :       ["tax", "block_foreign_aid"],
+    "captain" :    ["steal", "block_steal"],
+    "assassin" :   ["assassinate"],
+    "contessa" :   ["block_assassinate"],
+    "ambassador" : ["exchange", "block_steal"]
+    }
 
 class Deck:
     def __init__(self):
@@ -79,9 +95,14 @@ class Player:
     def react(self, hint):
         if hint == "turn":
             return self.turn()
-        if hint == "discard":
+        elif hint in ["discard", "placeback", "challenged"]:
             discard_me = self.cards[0]
             return discard_me
+        elif hint == "cb?":
+            return "pass"
+        else:
+            print("error: unknown hint for reaction!")
+            return "?"
         
     def find_active_target(self):
         # Find all the players
@@ -170,7 +191,8 @@ class Game_Master:
         action = active_player.react("turn")
         message = self.active_player_name + " " + action
         self.broadcast(message)
-        # Next week we have to insert challenge and block architecture here
+
+        
         
         split_action = action.split()
         if len(split_action) == 2:
@@ -183,7 +205,79 @@ class Game_Master:
         
         # TODO: Check if action was legal
         
-        self.handle_action(self.active_player_name, action, target_name)
+        # There are 4 possibilities below:
+            # 1 - the action is not blocked and not challenged
+            # 2 - the action is not blocked and challenged
+            # 3 - the action is blocked and the block is not challenged
+            # 4 - the action is blocked and the block is challenged
+        challenged = False # successfully challenged
+        blocked = False # attempted to be blocked
+        if action in respondable_actions:
+            reactions = self.get_table_reactions(self.active_player_name)
+            # first, see if someone wanted to block. Blocking takes precedence
+            # over challenging.
+            # TODO: Check if block was legal
+            blockers = self.get_players_who("block", reactions)
+            if len(blockers) == 0:
+                blocked = False
+            else:
+                random.shuffle(blockers)
+                blocker = blockers[0] # pick a blocker at random
+                blocking_action = "block" + "_" + action
+                message = blocker + " " + blocking_action
+                self.broadcast(message)
+                reactions = self.get_table_reactions(blocker)
+                blocked = True
+                # if someone blocked the first time, then anyone who wanted
+                # to challenge the first time is ignored. They are given the
+                # chance to see if they want to challenge the block instead
+            
+            challenged = False # set to true if successful
+            challengers = self.get_players_who("challenge", reactions)
+            if len(challengers) == 0:
+                pass
+            else:
+                random.shuffle(challengers)
+                challenger = challengers[0]
+                message = challenger + " " + "challenge"
+                self.broadcast(message)
+                # Now ask the challenged player to reveal a card in their hand
+                if blocked == True:
+                    challenged_player_name = blocker
+                    challenged_action = blocking_action
+                else: # blocked == False:
+                    challenged_player_name = self.active_player_name
+                    challenged_action = action
+                challenged_player = self.name_to_player(challenged_player_name)
+                shown_card = challenged_player.react("challenged")
+                challenged_player.cards.remove(shown_card)
+                if challenged_action in card_abilities[shown_card]:
+                    # Then the challenger loses, challenged wins
+                    self.deck.insert(shown_card)
+                    self.deck.shuffle()
+                    challenged_player.cards.append(self.deck.draw())
+                    challenging_player = self.name_to_player(challenger)
+                    discarded_card = challenging_player.react("discard")
+                    challenging_player.cards.remove(discarded_card)
+                    message = challenger + " discard " + discarded_card
+                    if len(challenging_player.cards) == 0:
+                        self.eliminate(challenger)
+                else:
+                    # challenger wins, challenged loses
+                    challenged = True
+                    message = challenged_player_name + " discard " + shown_card
+                    if len(challenged_player.cards) == 0:
+                        self.eliminate(challenged_player_name)
+                self.broadcast(message)
+        
+        if (blocked ^ challenged):
+            # blocked but not successfully challenged
+            # or not blocked but successfully challenged
+            pass
+        else:
+            # not blocked or successfully challenged
+            # or blocked but the block was successfully challenged
+            self.handle_action(self.active_player_name, action, target_name)
 
 
         # Now advance the active player
@@ -241,6 +335,26 @@ class Game_Master:
         if ap_index == len(self.active_player_names):
             ap_index = 0
         self.active_player_name = self.active_player_names[ap_index]
+
+    def get_table_reactions(self, player_to_exclude=None):
+        players_to_ask = self.active_player_names.copy()
+        if player_to_exclude is not None:
+            players_to_ask.remove(player_to_exclude)
+        reactions = []
+        for player_name in players_to_ask:
+            player = self.name_to_player(player_name)
+            reaction = player.react("cb?")
+            reactions.append(player_name + " " + reaction)
+        return reactions
+
+    def get_players_who(self, response, reactions_list):
+        players_responding = []
+        for reaction in reactions_list:
+            player_name = reaction.split()[0]
+            player_response = reaction.split()[1]
+            if player_response == response:
+                players_responding.append(player_name)
+        return players_responding
 
     def handle_action(self, player_name, action, target_name):
         # Handle an unblocked, unchallenged action
@@ -321,6 +435,7 @@ boo = Player("boo")
 
 common_players = [trey, boo]
 gm = Game_Master()
-gm.game(common_players)
+# gm.game(common_players)
 
 me_players = [humanPlayer, trey]
+gm.game(me_players)
