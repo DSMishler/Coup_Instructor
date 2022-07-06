@@ -14,6 +14,7 @@ Created on Mon Jun 20 13:06:02 2022
 
 import random
 import human_player
+import Markus
 
 coup_actions = [
     "income",
@@ -116,22 +117,21 @@ class Deck:
                 self.add(card)
         self.shuffle()
 
-class Player:
+class Player_Trey:
     def __init__(self, name):
         self.name = name
         self.log = ""
         self.coins = 0
         self.cards = []
-    def turn(self):
-        if self.coins < 7:
-            return "tax"
-        else:
-            target = self.find_active_target()
-            return "coup" + " " + target
+
     
     def react(self, hint):
         if hint == "turn":
-            return self.turn()
+            if self.coins < 7:
+                return "income"
+            else:
+                target = self.find_active_target()
+                return "coup" + " " + target
         elif hint in ["discard", "placeback", "challenged"]:
             discard_me = self.cards[0]
             return discard_me
@@ -140,7 +140,9 @@ class Player:
         else:
             print("error: unknown hint for reaction!")
             return "?"
-        
+    
+    # Look at the log, and find a player who is still active for a target
+    # Perhaps for stealing, coup-ing, or assassinating
     def find_active_target(self):
         # Find all the players
         first_log_line = self.log.split('\n')[0]
@@ -202,6 +204,9 @@ class Game_Master:
         if(len(players) > 6):
             print("Error: game must be played with at most 6 players")
 
+
+        # TODO: double check for no duplicate names
+        self.players = []
         self.active_player_names = []
         for player in players:
             self.active_player_names.append(player.name)
@@ -565,13 +570,31 @@ def double_list(mylist):
 
 
 humanPlayer = human_player.Player("me")
-trey = Player("trey")
-boo = Player("boo")
+trey = Player_Trey("trey")
+markus = Markus.Player_Markus()
 
-
-common_players = [trey, boo]
 gm = Game_Master()
 # gm.game(common_players)
 
-me_players = [humanPlayer, trey]
-gm.game(me_players)
+me_players = [humanPlayer, markus]
+# gm.game(me_players)
+
+
+
+
+wincounts_markus = 0
+wincounts_trey = 0
+for i in range(1000):
+    gm.game([trey, markus], fname = "treyvmarkus.coup")
+    gamefile = open("treyvmarkus.coup")
+    lines = gamefile.read().split('\n')
+    winnerline = lines[-2]
+    winner = winnerline.split()[1]
+    if winner == "markus":
+        wincounts_markus += 1
+    elif winner == "trey":
+        wincounts_trey += 1
+    gamefile.close()
+    
+print("markus wins", wincounts_markus, "games")
+print("trey wins", wincounts_trey, "games")

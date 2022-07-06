@@ -1,16 +1,10 @@
-players: [me, trey]
+players: [me, markus]
 me tax
-trey tax
-me tax
-trey tax
-me coup trey
-trey discard duke
-trey coup me
-me discard captain
-me tax
-trey tax
-me tax
-trey tax
-me challenge
-me discard contessa
-winner: trey
+markus steal me
+me block_steal
+markus challenge
+markus discard ambassador
+me steal markus
+markus challenge
+markus discard contessa
+winner: me

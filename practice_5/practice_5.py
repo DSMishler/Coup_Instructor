@@ -5,6 +5,10 @@ Created on Thu Jun 23 13:48:47 2022
 @author: Daniel Mishler
 """
 
+# If you haven't finished practices before practice 5, don't worry about it -
+# Start here.
+
+
 # Problem 1
 # show with an example whether or not a dictionary is mutable in python
 
@@ -60,3 +64,6 @@ Created on Thu Jun 23 13:48:47 2022
 
 # Problem 5
 # Who is more likely to win: Beef or Markus?
+# Hint: you need to run many games. Perhaps 1000.
+# Automate it
+# Run a game, read the winner line, keep a count, and repeat
