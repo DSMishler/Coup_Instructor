@@ -117,7 +117,7 @@ shuffles his card into the deck and draws a new (possibly the same) card.
 Then his action/reaction proceeds without any further interruption.
 No more blocks or challenges can happen that turn.
 
-### What if I echanged, get challenged, and win the challenge?
+### What if I exchange, get challenged, and win the challenge?
 
 You place your ambassador in the deck, shuffle the deck, and then proceed
 with your exchange.
@@ -148,7 +148,7 @@ way that the rules portray blocking of steals, but this is the way *our*
 
 This could happen if you steal from someone with 1 card and they fail in
 a challenge to your steal or if someone succeeds in a challenge to their block.
-You would still get their coins.
+You would still get the coins you stole.
 
 ## My player agent
 
