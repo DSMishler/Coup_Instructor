@@ -19,8 +19,8 @@ wincounts_markus = 0
 wincounts_trey = 0
 wincounts_boo = 0
 for i in range(500):
-    gm.game([trey, boo, markus], fname = "treyvmarkus.coup")
-    gamefile = open("treyvmarkus.coup")
+    gm.game([trey, boo, markus], fname = "treyvboovmarkus.coup")
+    gamefile = open("treyvboovmarkus.coup")
     lines = gamefile.read().split('\n')
     winnerline = lines[-2]
     winner = winnerline.split()[1]

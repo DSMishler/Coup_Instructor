@@ -1,13 +1,15 @@
-players: [me, markus]
+players: [markus, me]
+markus steal me
 me tax
 markus steal me
-me block_steal
-markus challenge
+me tax
+markus steal me
+me tax
+markus coup me
+me discard contessa
+me assassinate markus
+markus discard ambassador
+markus steal me
+me challenge
 markus discard assassin
-me tax
-markus steal me
-me tax
-markus steal me
-me coup markus
-markus discard captain
 winner: me

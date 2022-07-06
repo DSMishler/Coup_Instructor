@@ -32,7 +32,8 @@ Created on Thu Jun 23 13:48:47 2022
 # Problem 3
 # Build Beef's react function for turn.
     # Beef will always take tax on turn 1, no matter what's in his hand
-    # Beef will always swap if he can, preferring to place back cards so that
+    # Beef will always swap if he has an ambassador,
+        # preferring to place back cards so that
         # he will have the highest priority cards
         # If he sees three ambassadors, don't worry about it. He'll just lose
         # that game. If you really played with Beef, he's smarter than this,
