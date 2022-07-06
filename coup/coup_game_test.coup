@@ -3,8 +3,11 @@ me tax
 markus steal me
 me block_steal
 markus challenge
-markus discard ambassador
-me steal markus
-markus challenge
-markus discard contessa
+markus discard assassin
+me tax
+markus steal me
+me tax
+markus steal me
+me coup markus
+markus discard captain
 winner: me

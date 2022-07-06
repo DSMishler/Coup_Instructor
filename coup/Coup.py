@@ -15,6 +15,7 @@ Created on Mon Jun 20 13:06:02 2022
 import random
 import human_player
 import Markus
+import Trey
 
 coup_actions = [
     "income",
@@ -117,76 +118,6 @@ class Deck:
                 self.add(card)
         self.shuffle()
 
-class Player_Trey:
-    def __init__(self, name):
-        self.name = name
-        self.log = ""
-        self.coins = 0
-        self.cards = []
-
-    
-    def react(self, hint):
-        if hint == "turn":
-            if self.coins < 7:
-                return "income"
-            else:
-                target = self.find_active_target()
-                return "coup" + " " + target
-        elif hint in ["discard", "placeback", "challenged"]:
-            discard_me = self.cards[0]
-            return discard_me
-        elif hint == "cb?":
-            return "pass"
-        else:
-            print("error: unknown hint for reaction!")
-            return "?"
-    
-    # Look at the log, and find a player who is still active for a target
-    # Perhaps for stealing, coup-ing, or assassinating
-    def find_active_target(self):
-        # Find all the players
-        first_log_line = self.log.split('\n')[0]
-        start_i = first_log_line.find('[')
-        end_i = first_log_line.find(']')
-        players_string = first_log_line[start_i+1:end_i]
-        players_array = players_string.split(", ")
-        # Remove myself
-        players_array.remove(self.name)
-        
-        # You might entertain using a dictionary here: I will just double
-        # the list
-        players_array = double_list(players_array)
-        
-        # Find the last player that acted
-        for line in self.log.split('\n'):
-            if line == "":
-                continue # ignore the last (empty) line
-                # the difference between break and continue here is simply
-                # that continue will end the iteration of the for loop, and
-                # instead of being *guaranteed* to exit the for loop, will
-                # enter the next iteration if there is one to do.
-            player = line.split()[0]
-            action = line.split()[1]
-            if action == "discard" and player != self.name:
-                players_array.remove(player)
-        
-        # You don't need to shuffle, but I will
-        random.shuffle(players_array)
-        
-        target = players_array[0]
-        return target
-                
-    def receive(self, message):
-        self.log += message
-        self.log += "\n"
-
-    def show(self, show_cards = False):
-        print("player", self.name)
-        if show_cards:
-            print("cards:", self.cards)
-        else:
-            print("cards:", len(self.cards))
-        print("coins:", self.coins)
     
 
 class Game_Master:
@@ -205,13 +136,23 @@ class Game_Master:
             print("Error: game must be played with at most 6 players")
 
 
-        # TODO: double check for no duplicate names
+        # randomly shuffle who goes first
+        random.shuffle(players)
+
         self.players = []
         self.active_player_names = []
         for player in players:
             self.active_player_names.append(player.name)
             self.players.append(player)
-        
+
+        # double check for no duplicate names
+        # a set is a Python built-in type that you can think of as a sorted,
+        # unique list.
+        # set() converts the list into a set, effectively removing duplicates.
+        if len(set(self.active_player_names)) != len(self.active_player_names):
+            print("Error: cannot play coup with duplicate names! Aborting.")
+            return False
+
         self.deck.coup_cards()
         
         self.log = ""
@@ -226,6 +167,8 @@ class Game_Master:
         
         self.broadcast(first_message)
         self.active_player_name = self.active_player_names[0]
+        
+        return True
 
 
     def turn(self):
@@ -403,8 +346,23 @@ class Game_Master:
     def advance_active_player(self):
         # note to students: there are *lots* of better ways to do this and
         # I encourage you to take them up
-        # TODO: fix the bug if a nonactive player is eliminated!
-        ap_index = self.active_player_names.index(self.active_player_name)
+        # Why this try-except block? A player might no longer be active
+        # when their turn ends. What if they are eliminated on their turn?
+        try:
+            ap_index = self.active_player_names.index(self.active_player_name)
+        except ValueError:
+            active_player = self.name_to_player(self.active_player_name)
+            p_index = self.players.index(active_player)
+            while True:
+                p_index += 1
+                if p_index == len(self.players):
+                    p_index = 0
+                try:
+                    try_name = self.players[p_index].name
+                    ap_index = self.active_player_names.index(try_name)
+                    break
+                except ValueError:
+                    continue
         ap_index += 1
         if ap_index == len(self.active_player_names):
             ap_index = 0
@@ -546,7 +504,8 @@ class Game_Master:
         return returned_card
 
     def game(self, players, fname = "coup_game_test.coup"):
-        self.game_init(players)
+        if self.game_init(players) == False:
+            return # init failed, don't go forward with the game
         while len(self.active_player_names) > 1:
             self.turn()
         message = "winner: " + self.active_player_name
@@ -559,42 +518,19 @@ class Game_Master:
         
 
 
-# as an aside, I know that `mylist` is a mutable, but I'm returning by value
-# anyway to sweep that under the rug
-def double_list(mylist):
-    orig_len = len(mylist)
-    for i in range(orig_len):
-        mylist.append(mylist[i])
-    return mylist
 
 
 
-humanPlayer = human_player.Player("me")
-trey = Player_Trey("trey")
-markus = Markus.Player_Markus()
-
-gm = Game_Master()
-# gm.game(common_players)
-
-me_players = [humanPlayer, markus]
-# gm.game(me_players)
-
-
-
-
-wincounts_markus = 0
-wincounts_trey = 0
-for i in range(1000):
-    gm.game([trey, markus], fname = "treyvmarkus.coup")
-    gamefile = open("treyvmarkus.coup")
-    lines = gamefile.read().split('\n')
-    winnerline = lines[-2]
-    winner = winnerline.split()[1]
-    if winner == "markus":
-        wincounts_markus += 1
-    elif winner == "trey":
-        wincounts_trey += 1
-    gamefile.close()
+# This little if statement will cause this code to be run only if you pressed
+# the run button on this file. If you use the Arena.py file, this code
+# won't run!
+if __name__ == '__main__':
+    humanPlayer = human_player.Player("me")
+    trey = Trey.Player_Trey("trey")
+    markus = Markus.Player_Markus()
     
-print("markus wins", wincounts_markus, "games")
-print("trey wins", wincounts_trey, "games")
+    gm = Game_Master()
+    
+    me_players = [humanPlayer, markus]
+    
+    gm.game(me_players)

@@ -1,62 +1,38 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jun 20 17:28:06 2022
+Created on Wed Jul  6 11:11:12 2022
 
-@author: dsmishler
+@author: Daniel Mishler
 """
 
 import random
 
-class Player:
+class Player_Trey:
     def __init__(self, name):
         self.name = name
         self.log = ""
         self.coins = 0
         self.cards = []
+
     
     def react(self, hint):
         if hint == "turn":
-            reaction = input("your turn: ")
-            while reaction == "show":
-                print("your cards: ", self.cards)
-                print("your coins: ", self.coins)
-                print("so far:")
-                print(self.log)
-                reaction = input("your turn: ")
-            return reaction
-        elif hint == "discard":
-            reaction = input("discard: ")
-            while reaction == "show":
-                print("you must discard")
-                print("your hand:", self.cards)
-                reaction = input("discard: ")
-            return reaction
-        elif hint == "placeback":
-            reaction = input("placeback: ")
-            while reaction == "show":
-                print("you must placeback from your exchange")
-                print("your hand:", self.cards)
-                reaction = input("placeback: ")
-            return reaction
-        elif hint == "challenged":
-            reaction = input("challenged: ")
-            while reaction == "show":
-                print("you must choose a card to respond to the challenge")
-                print("your hand:", self.cards)
-                reaction = input("challenged: ")
-            return reaction
+            if self.coins < 7:
+                return "income"
+            else:
+                target = self.find_active_target()
+                return "coup" + " " + target
+        elif hint in ["discard", "placeback", "challenged"]:
+            discard_me = self.cards[0]
+            return discard_me
         elif hint == "cb?":
-            reaction = input("challenge or block?: ")
-            while reaction == "show":
-                print("you must choose to challenge, block, or pass.")
-                print("your hand:", self.cards)
-                reaction = input("challenge or block?: ")
-            return reaction
+            return "pass"
         else:
-            print("uknown hint '%s'" % hint)
+            print("error: unknown hint for reaction!")
             return "?"
-        
+    
+    # Look at the log, and find a player who is still active for a target
+    # Perhaps for stealing, coup-ing, or assassinating
     def find_active_target(self):
         # Find all the players
         first_log_line = self.log.split('\n')[0]
@@ -70,7 +46,6 @@ class Player:
         # You might entertain using a dictionary here: I will just double
         # the list
         players_array = double_list(players_array)
-            
         
         # Find the last player that acted
         for line in self.log.split('\n'):
@@ -94,7 +69,6 @@ class Player:
     def receive(self, message):
         self.log += message
         self.log += "\n"
-        print(message)
 
     def show(self, show_cards = False):
         print("player", self.name)
@@ -105,6 +79,8 @@ class Player:
         print("coins:", self.coins)
 
 
+# as an aside, I know that `mylist` is a mutable, but I'm returning by value
+# anyway to sweep that under the rug
 def double_list(mylist):
     orig_len = len(mylist)
     for i in range(orig_len):

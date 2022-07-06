@@ -35,13 +35,13 @@ class Player_Markus:
             # if nothing else works...
             return "captain"
         elif hint == "challenged":
-            return self.cards[0]
             log_lines = self.log.split('\n')
             # -1 would be the last line,
             # but the last line is empty (we add a newline every time)
-            # so we want -2.
-            last_line = log_lines[-2]
-            print("MARKUS: considering", last_line)
+            # and the second to last line is the thing that we are responding
+            # to (the challenge).
+            # so we want -3.
+            last_line = log_lines[-3]
             action = last_line.split()[1]
             # This is overkill for markus, because all markus should be doing
             # is showing you the captain when you challenge his steal
@@ -57,7 +57,6 @@ class Player_Markus:
         elif hint == "cb?":
             log_lines = self.log.split('\n')
             last_line = log_lines[-2]
-            print("MARKUS: considering", last_line)
             action = last_line.split()[1]
             
             if action in ["steal", "block_steal", "exchange"]:
