@@ -130,6 +130,14 @@ That player must discard a card for losing the challenge. Then, the assassinate
 action resolves. This means the player has discarded 2 cards, and is
 immediately eliminated.
 
+### What if I assassinate a player, he challenges me, and I lose?
+
+The player you assassinated does not have to discard a card. At the table
+in person, if you've played with me, you often notice that we don't give a
+refund to the player who did the assassinate. Per the rules, the player
+who lost the challenge still gets their money back, and the `Game_Master`
+will also treat it this way.
+
 ## Steals
 
 ### Can I steal from a player with fewer than 2 coins?

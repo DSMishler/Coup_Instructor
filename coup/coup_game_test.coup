@@ -1,15 +1,12 @@
-players: [markus, me]
-markus steal me
+players: [beef, me]
+beef income
 me tax
-markus steal me
+beef income
 me tax
-markus steal me
-me tax
-markus coup me
-me discard contessa
-me assassinate markus
-markus discard ambassador
-markus steal me
-me challenge
-markus discard assassin
+beef income
+me assassinate beef
+beef discard assassin
+beef income
+me assassinate beef
+beef discard captain
 winner: me

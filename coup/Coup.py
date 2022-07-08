@@ -16,6 +16,7 @@ import random
 import human_player
 import Markus
 import Trey
+import Beef
 
 coup_actions = [
     "income",
@@ -302,14 +303,15 @@ class Game_Master:
         return
 
 
-    def show(self, show_cards = False):
+    def show(self, show_cards = False, show_log = False):
         print("Coup game")
         print("players:", len(self.players))
         for player in self.players:
             player.show(show_cards)
             print()
-        print("game so far:")
-        print(self.log)
+        if show_log == True:
+            print("game so far:")
+            print(self.log)
 
     def receive(self, message):
         self.log += message
@@ -503,11 +505,13 @@ class Game_Master:
                 legal = True
         return returned_card
 
-    def game(self, players, fname = "coup_game_test.coup"):
+    def game(self, players, fname = "coup_game_test.coup", debug = False):
         if self.game_init(players) == False:
             return # init failed, don't go forward with the game
         while len(self.active_player_names) > 1:
             self.turn()
+            if debug == True:
+                self.show(show_cards = True)
         message = "winner: " + self.active_player_name
         self.broadcast(message)
         gamefile = open(fname, "w")
@@ -528,9 +532,10 @@ if __name__ == '__main__':
     humanPlayer = human_player.Player("me")
     trey = Trey.Player_Trey("trey")
     markus = Markus.Player_Markus()
+    beef = Beef.Player_Beef()
     
     gm = Game_Master()
     
-    me_players = [humanPlayer, markus]
+    me_players = [humanPlayer, beef]
     
-    gm.game(me_players)
+    gm.game(me_players, debug=False)
