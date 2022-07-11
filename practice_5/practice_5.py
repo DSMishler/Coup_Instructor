@@ -41,6 +41,8 @@ Created on Thu Jun 23 13:48:47 2022
     # Beef will adopt a coup-ing objective if he doesn't have an assassin, and
         # an assassinating objective if he does have one. If he has enough
         # coins to try to pursue his objective, he will.
+        # You can randomly pick his target - the way you pick isn't important
+        # for purposes of this practice.
     # While Beef collects coins, he'll do the following:
         # If he has a Duke, he'll tax
         # else, if he thinks no one else has a Duke, he'll take foreign aid

@@ -5,6 +5,12 @@ Created on Fri Jul  8 11:21:08 2022
 @author: Daniel Mishler
 """
 
+# TODO: maybe change Beef later to sometimes tax anyway if he doesn't have a
+# duke. This is not a requirement for students, but it's something Beef might
+# do for the final.
+
+import random
+
 beef_card_priority = [
     "ambassador",
     "contessa",
@@ -38,8 +44,35 @@ class Player_Beef:
         self.coins = 0
     def react(self, hint):
         if hint == "turn":
-            game_info = self.get_player_stats(my_turn = True)
+            game_info = self.get_game_info(my_turn = True)
+            # Beef always taxes turn 1
+            if game_info["turn"] == 1:
+                return "tax"
+            
+            # else, it's not turn 1. What's the next highest priority?
+            # Beef will swap to get rid of an ambassador
+            if "ambassador" in self.cards:
+                return "exchange"
+            
+            
+            # Now, time for Beef's objective
+            target = self.find_target(game_info)
+            if "assassin" in self.cards and self.coins >= 3:
+                return "assassinate " + target
+            if self.coins >= 7:
+                return "coup " + target
+            
+            
+            # Now, what's the money-making strategy?
+            if "duke" in self.cards:
+                return "tax"
+            # TODO: add Beef's foreign_aid strategy
+            else:
+                return "income"
+            
+            
             return "income"
+            
         elif hint in ["placeback", "discard"]:
             for consideration in beef_card_priority:
                 for card in self.cards:
@@ -66,6 +99,8 @@ class Player_Beef:
             print("Error: beef couldn't find a card!")
             return "?"            
         elif hint == "cb?":
+            game_info = self.get_game_info(my_turn = False)
+            print(game_info)
             return "pass"
     
     
@@ -73,7 +108,11 @@ class Player_Beef:
     # This will function better than just getting a player who is alive:
     # It will also help identify threats. If you want to use this function,
     # Feel free to go ahead and try it.
-    def get_player_stats(self, my_turn = False):
+    def get_game_info(self, my_turn = False):
+        
+        # Turns start with turn 1 - it becomes turn 1 as soon as the
+        # first player acts.
+        turn = 0
         
         # Find all the players
         first_log_line = self.log.split('\n')[0]
@@ -89,6 +128,13 @@ class Player_Beef:
             players_dict[player_name] = {}
             players_dict[player_name]["cards"] = 2
             players_dict[player_name]["coins"] = 2
+        
+        
+        cb_state= {} # challenge/block state information
+        # Note: This information may not *always* be accurate,
+        # but it will always be accurate when needed for a "cb?" hint.
+        
+        first_player = players_array[0]
         
         
         # Man, do I feel like this section is a little sloppy. Relies on
@@ -121,6 +167,7 @@ class Player_Beef:
             apply_intent = False
             if action[:6] == "block_":
                 blocked = True
+                cb_state["blocker"] = player
             if action == "challenge":
                 challenged = True
                 challenger = player
@@ -158,18 +205,37 @@ class Player_Beef:
                 blocked = False
                 challenge_success = False
                 challenged = False
+                if player == first_player:
+                    turn += 1
+                cb_state["actor"] = player
+                cb_state["action"] = action
+                cb_state["target"] = target
+                cb_state["blocker"] = None
 
 
-        # print("prepared players dict:", players_dict)
-        turn = 0
-        # TODO: properly get the turn number
+        if my_turn == True and first_player == self.name:
+            turn += 1
+        
+        
         game_dict = {}
         game_dict["players"] = players_dict
         game_dict["turn"] = turn
+        game_dict["cb_state"] = cb_state
         return game_dict
         
-    
-    
+    def find_target(self, game_info):
+        # Find a target who is not Beef. Can be modified for smarter selection
+        # of targets later on.
+        valid_targets = []
+        for player in game_info["players"]:
+            if player == self.name:
+                continue
+            if game_info["players"][player]["cards"] > 0:
+                valid_targets.append(player)
+        
+        random.shuffle(valid_targets)
+        return valid_targets[0]
+        
     def receive(self, message):
         self.log += message
         self.log += "\n"
