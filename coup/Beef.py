@@ -36,6 +36,7 @@ turn_actions = [
     "assassinate"
     ]
 
+
 class Player_Beef:
     def __init__(self, name="beef"):
         self.name = name
@@ -66,9 +67,17 @@ class Player_Beef:
             # Now, what's the money-making strategy?
             if "duke" in self.cards:
                 return "tax"
-            # TODO: add Beef's foreign_aid strategy
-            else:
-                return "income"
+            
+            # Should Beef take foreign aid?
+            duke_reppers = self.who_claims_dukes()
+            for player in duke_reppers:
+                if game_info["players"][player]["cards"] == 0:
+                    duke_reppers.remove(player)
+            if self.name in duke_reppers:
+                duke_reppers.remove(self.name)
+            if len(duke_reppers) == 0:
+                return "foreign_aid"
+                
             
             
             return "income"
@@ -90,7 +99,6 @@ class Player_Beef:
                 if action in card_abilities[card]:
                     return card
             # Beef can't answer the challenge.
-            print("BEEF: ya got me")
             for consideration in beef_card_priority:
                 for card in self.cards:
                     if card == consideration:
@@ -100,7 +108,37 @@ class Player_Beef:
             return "?"            
         elif hint == "cb?":
             game_info = self.get_game_info(my_turn = False)
-            print(game_info)
+            # Always block if you can
+            if game_info["cb_state"]["action"] == "foreign_aid":
+                if "duke" in self.cards:
+                    return "block"
+            if game_info["cb_state"]["action"] == "assassinate":
+                if game_info["cb_state"]["target"] == self.name:
+                    if "contessa" in self.cards:
+                        return "block"
+            if game_info["cb_state"]["action"] == "steal":
+                if game_info["cb_state"]["target"] == self.name:
+                    if "captain" in self.cards:
+                        return "block"
+            
+            # Now for Beef's challenges
+            # turn 1 tax
+            if game_info["cb_state"]["action"] == "tax":
+                if game_info["turn"] == 1:
+                    if "duke" in self.cards:
+                        return "challenge"
+            if game_info["cb_state"]["action"] == "assassinate":
+                # Challenge people blocking Beef's assassins
+                if game_info["cb_state"]["actor"] == self.name:
+                    if game_info["cb_state"]["blocker"] is not None:
+                        if random.randint(0,1) == 1:
+                            return "challenge"
+                # Challenge people assassinating away Beef's last card
+                # (No need to check if we can block it since we already did)
+                if game_info["cb_state"]["target"] == self.name:
+                    if len(self.cards) == 1:
+                        return "challenge"
+            
             return "pass"
     
     
@@ -128,6 +166,7 @@ class Player_Beef:
             players_dict[player_name] = {}
             players_dict[player_name]["cards"] = 2
             players_dict[player_name]["coins"] = 2
+            players_dict[player_name]["claims"] = []
         
         
         cb_state= {} # challenge/block state information
@@ -235,7 +274,31 @@ class Player_Beef:
         
         random.shuffle(valid_targets)
         return valid_targets[0]
-        
+    
+    def who_claims_dukes(self):
+        players_with_duke = []
+        state = 0
+        # 0: waiting to see a duke claim
+        # 1: waiting to see if the duke claim is challenged
+        # Note: if they get challenged, they either lose the duke they had
+        #       OR they never had a duke. They get removed from the list.
+        for line in self.log.split('\n'):
+            if line == "":
+                action = player = ""
+            else:
+                player = line.split()[0]
+                action = line.split()[1]
+            if action in ["tax", "foreign_aid"]:
+                if player not in players_with_duke:
+                    players_with_duke.append(player)
+                state = 1
+            if state == 1:
+                if action == "challenge":
+                    players_with_duke.remove(player)
+                state = 0
+        print(players_with_duke)
+        return players_with_duke
+    
     def receive(self, message):
         self.log += message
         self.log += "\n"
