@@ -1,12 +1,23 @@
 players: [beef, me]
-beef income
+beef tax
 me tax
 beef income
 me tax
 beef income
-me assassinate beef
-beef discard assassin
+me steal beef
+beef income
+me coup beef
+beef discard contessa
 beef income
 me assassinate beef
-beef discard captain
+beef block_assassinate
+me challenge
+me discard duke
+beef exchange
+me steal beef
+beef income
+me steal beef
+beef income
+me coup beef
+beef discard contessa
 winner: me

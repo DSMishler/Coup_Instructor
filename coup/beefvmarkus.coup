@@ -1,12 +1,10 @@
-players: [beef, markus]
-beef tax
+players: [markus, beef]
 markus steal beef
 beef block_steal
 markus challenge
 markus discard assassin
-beef foreign_aid
+beef tax
 markus steal beef
-beef block_steal
-markus challenge
+beef assassinate markus
 markus discard captain
 winner: beef

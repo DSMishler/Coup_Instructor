@@ -10,6 +10,7 @@ Created on Fri Jul  8 11:21:08 2022
 # do for the final.
 
 import random
+import pickle
 
 beef_card_priority = [
     "ambassador",
@@ -43,6 +44,13 @@ class Player_Beef:
         self.log = ""
         self.cards = []
         self.coins = 0
+        try:
+            datafile = open("datafile_beef.pkl", "rb")
+            self.memory = pickle.load(datafile)
+            datafile.close()
+        except FileNotFoundError:
+            self.memory = {}
+        print(self.memory)
     def react(self, hint):
         if hint == "turn":
             game_info = self.get_game_info(my_turn = True)
@@ -94,6 +102,11 @@ class Player_Beef:
             log_lines = self.log.split('\n')
             last_line = log_lines[-3]
             action = last_line.split()[1]
+            try:
+                self.memory["challenged_on"].append(action)
+            except:
+                self.memory["challenged_on"] = []
+                self.memory["challenged_on"].append(action)
             # First, see if he can answer the challenge
             for card in self.cards:
                 if action in card_abilities[card]:
@@ -302,6 +315,12 @@ class Player_Beef:
     def receive(self, message):
         self.log += message
         self.log += "\n"
+        
+        if message[:7] == "winner:":
+            # Game is over, save my memories from this game
+            datafile = open("datafile_beef.pkl", "wb")
+            pickle.dump(self.memory, datafile)
+            datafile.close()
     
     def show(self, show_cards = False):
         print("player", self.name)

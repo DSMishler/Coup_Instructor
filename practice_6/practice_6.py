@@ -34,6 +34,7 @@ Created on Tue Jul 12 13:12:44 2022
 # 1/3 of the time. Name your coup agent `Player_*`, where * is a name of your
 # choice. Example: `Player_Anton`. You might end up making many, many such
 # agents. Just make one that has a chance to win against Markus and Beef.
+# And it better beat Trey 100% of the time.
 
 
 # Problem 5
