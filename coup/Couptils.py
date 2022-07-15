@@ -127,7 +127,7 @@ def log_to_turn_list(log):
             else: # The challenge was from the action
                 turns[-1]["discard_a"][actor] = card
 
-        elif action == "winner:":
+        elif actor == "winner:":
             pass
         
         else:
@@ -192,6 +192,7 @@ def turn_list_to_game_dict(players, turn_list):
     game_dict["players"] = players_dict
     game_dict["this_turn"] = turn_list[-1]
     game_dict["round"] = None # TODO: determine the round cleanly
+    return game_dict
 
 if __name__ == '__main__':
     turnfile = open("coup_game_test.coup", "r")
@@ -199,4 +200,6 @@ if __name__ == '__main__':
     turns = log_to_turn_list(log)
     players = get_players_from_log(log)
     game_dict = turn_list_to_game_dict(players, turns)
+    print(turns)
+    print(game_dict)
     turnfile.close()

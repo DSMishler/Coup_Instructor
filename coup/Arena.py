@@ -21,8 +21,8 @@ wincounts_markus = 0
 wincounts_trey = 0
 wincounts_boo = 0
 wincounts_beef = 0
-for i in range(1):
-    gm.game([beef, markus], fname = "beefvmarkus.coup")
+for i in range(1000):
+    gm.game([trey, boo, markus], fname = "beefvmarkus.coup")
     gamefile = open("beefvmarkus.coup")
     lines = gamefile.read().split('\n')
     winnerline = lines[-2]
@@ -38,6 +38,6 @@ for i in range(1):
     gamefile.close()
     
 print("markus wins", wincounts_markus, "games")
-# print("trey wins", wincounts_trey, "games")
-# print("boo wins", wincounts_boo, "games")
-print("beef wins", wincounts_beef, "games")
+print("trey wins", wincounts_trey, "games")
+print("boo wins", wincounts_boo, "games")
+# print("beef wins", wincounts_beef, "games")
