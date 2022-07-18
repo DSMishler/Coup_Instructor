@@ -293,7 +293,10 @@ class Game_Master:
             # or not blocked but successfully challenged
             
             # Normally, do nothing. But there is one exception. An assassin
-            #
+            # still causes the player to lose 3 coins if it was blocked.
+            
+            if action == "assassinate" and blocked == True:
+                self.name_to_player(self.active_player_name).coins -= 3
             
         else:
             # not blocked or successfully challenged
@@ -516,12 +519,15 @@ class Game_Master:
         while len(self.active_player_names) > 1:
             self.turn()
             turn_num += 1
-            if turn_num > 50:
-                print("Warning: game lasting over 50 turns. Infinite loop?")
+            if turn_num > 100:
+                break
                 debug = True
             if debug == True:
                 self.show(show_cards = True, show_log = True)
-        message = "winner: " + self.active_player_name
+        if turn_num > 100:
+            message = "winner: none"
+        else:
+            message = "winner: " + self.active_player_name
         self.broadcast(message)
         gamefile = open(fname, "w")
         gamefile.write(self.log)

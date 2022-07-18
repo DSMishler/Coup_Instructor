@@ -142,6 +142,11 @@ refund to the player who did the assassinate. Per the rules, the player
 who lost the challenge still gets their money back, and the `Game_Master`
 will also treat it this way.
 
+### Do I keep to keep my coins if I assassinate a player and am blocked?
+
+No, you still lose the 3 coins, making the assassin a tricky exception in
+action a handling.
+
 ## Steals
 
 ### Can I steal from a player with fewer than 2 coins?

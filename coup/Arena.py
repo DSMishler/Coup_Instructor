@@ -28,6 +28,7 @@ fname = ""
 for player in players:
     wincounts[player.name] = 0
     fname += player.name
+wincounts["none"] = 0
 fname += ".coup"
 for i in range(100):
     print("game #%d" % i)

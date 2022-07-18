@@ -24,6 +24,10 @@ class Player_JoeyD:
             self.memory = {}
             self.memory["games"] = []
             self.memory["opponents"] = {}
+        if(random.randint(0,9) == 0):
+            self.mode = "cannon"
+        else:
+            self.mode = "normal"
     
     def react(self, hint):
         game_dict = Couptils.log_to_game_dict(self.log)

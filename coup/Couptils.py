@@ -164,7 +164,10 @@ def turn_list_to_game_dict(players, turn_list):
             
         if blocked ^ challenge_success:
             # action was either blocked or successfully challenged
-            pass
+            
+            if turn["action"] == "assassinate":
+                players_dict[turn["actor"]]["coins"] -= 3
+            
         else:
             # action was neither blocked nor challenged, or
             # action was blocked, but block was challenged
@@ -182,6 +185,10 @@ def turn_list_to_game_dict(players, turn_list):
                 steal_coins = min(players_dict[target]["coins"], 2)
                 players_dict[actor]["coins"] += steal_coins
                 players_dict[target]["coins"] -= steal_coins
+            if action == "assassinate":
+                players_dict[actor]["coins"] -= 3
+            if action == "coup":
+                players_dict[actor]["coins"] -= 7
         # apply discards
         for player in turn["discard_a"]: # a loop with at most 1 iteration
             players_dict[player]["cards"] -= 1

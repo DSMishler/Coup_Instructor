@@ -5,3 +5,6 @@ coup/__pycache__/Coup.cpython-38.pyc
 coup/__pycache__/Trey.cpython-38.pyc
 coup/__pycache__/Beef.cpython-38.pyc
 coup/__pycache__/Data_Demo_Beef.cpython-38.pyc
+*.pyc
+*.coup
+*.pkl
