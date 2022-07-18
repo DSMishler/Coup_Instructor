@@ -20,13 +20,17 @@ Place exactly 3 of each in your deck:
 
 ### How does ambassador exchange with the deck?
 
+I note that the rules state the ambassador takes cards *randomly* from the
+deck, but we will do something special for our version of Coup.
+
 The player who exchanges will draw two cards from the top of the deck,
 then place two cards from their hand on top of the deck. Those cards are
 just sitting there, waiting for the next person who exchanges to see what you
 just put down.
 
-I anticipate this action prove to be difficult to implement for agents and
-players, and it will probably be very difficult for an agent to make good
+This choice was fun to do when Coup was played with a group of friends
+at a lunch table, but it will probably be very difficult
+for an agent to make good
 use of it.
 
 ## Game file

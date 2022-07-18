@@ -188,18 +188,37 @@ def turn_list_to_game_dict(players, turn_list):
         for player in turn["discard_c"]:
             players_dict[player]["cards"] -= 1
     
+    
+    # How to know what round it is:
+    # The player who just took the last turn can define what round it is.
+    # Simply observe how many times *that player's name* appears in the turns
+    # when that player is the actor.
+    this_round = 0
+    for turn in turn_list:
+        if turn["actor"] == turn_list[-1]["actor"]:
+            this_round += 1
+    # There's a catch, though. If that player ended a round, then the *next*
+    # turn is in round `this_round+1`.
+    
     game_dict = {}
     game_dict["players"] = players_dict
-    game_dict["this_turn"] = turn_list[-1]
-    game_dict["round"] = None # TODO: determine the round cleanly
+    game_dict["turns"] = turn_list
+    try:
+        game_dict["this_turn"] = turn_list[-1]
+    except IndexError:
+        game_dict["this_turn"] = None
+    game_dict["round"] = this_round
+    return game_dict
+
+def log_to_game_dict(log):
+    turns = log_to_turn_list(log)
+    players = get_players_from_log(log)
+    game_dict = turn_list_to_game_dict(players, turns)
     return game_dict
 
 if __name__ == '__main__':
     turnfile = open("coup_game_test.coup", "r")
     log = turnfile.read()
-    turns = log_to_turn_list(log)
-    players = get_players_from_log(log)
-    game_dict = turn_list_to_game_dict(players, turns)
-    print(turns)
+    game_dict = log_to_game_dict(log)
     print(game_dict)
     turnfile.close()

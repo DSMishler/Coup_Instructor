@@ -291,7 +291,10 @@ class Game_Master:
         if (blocked ^ challenged):
             # blocked but not successfully challenged
             # or not blocked but successfully challenged
-            pass
+            
+            # Normally, do nothing. But there is one exception. An assassin
+            #
+            
         else:
             # not blocked or successfully challenged
             # or blocked but the block was successfully challenged
@@ -509,10 +512,15 @@ class Game_Master:
     def game(self, players, fname = "coup_game_test.coup", debug = False):
         if self.game_init(players) == False:
             return # init failed, don't go forward with the game
+        turn_num = 0
         while len(self.active_player_names) > 1:
             self.turn()
+            turn_num += 1
+            if turn_num > 50:
+                print("Warning: game lasting over 50 turns. Infinite loop?")
+                debug = True
             if debug == True:
-                self.show(show_cards = True)
+                self.show(show_cards = True, show_log = True)
         message = "winner: " + self.active_player_name
         self.broadcast(message)
         gamefile = open(fname, "w")

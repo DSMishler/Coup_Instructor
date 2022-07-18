@@ -9,6 +9,7 @@ import Coup
 import Markus
 import Trey
 import Beef
+import JoeyD
 
 gm = Coup.Game_Master()
 
@@ -16,28 +17,30 @@ trey = Trey.Player_Trey("trey")
 boo = Trey.Player_Trey("boo")
 markus = Markus.Player_Markus()
 beef = Beef.Player_Beef()
+joeyd = JoeyD.Player_JoeyD()
 
-wincounts_markus = 0
-wincounts_trey = 0
-wincounts_boo = 0
-wincounts_beef = 0
-for i in range(1000):
-    gm.game([trey, boo, markus], fname = "beefvmarkus.coup")
-    gamefile = open("beefvmarkus.coup")
+
+players = [joeyd, beef, markus]
+
+
+wincounts = {}
+fname = ""
+for player in players:
+    wincounts[player.name] = 0
+    fname += player.name
+fname += ".coup"
+for i in range(100):
+    print("game #%d" % i)
+    gm.game(players, fname = fname)
+    gamefile = open(fname, "r")
     lines = gamefile.read().split('\n')
     winnerline = lines[-2]
     winner = winnerline.split()[1]
-    if winner == "markus":
-        wincounts_markus += 1
-    elif winner == "trey":
-        wincounts_trey += 1
-    elif winner == "boo":
-        wincounts_boo += 1
-    elif winner == "beef":
-        wincounts_beef += 1
+    wincounts[winner] += 1
+
     gamefile.close()
-    
-print("markus wins", wincounts_markus, "games")
-print("trey wins", wincounts_trey, "games")
-print("boo wins", wincounts_boo, "games")
-# print("beef wins", wincounts_beef, "games")
+
+
+for player in players:
+    name = player.name
+    print("%s wins %d games" % (name, wincounts[name]))
