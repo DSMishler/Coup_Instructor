@@ -10,6 +10,22 @@ import random
 import Couptils
 import pickle
 
+### Optimizations to consider
+# Go cannon mode less against better known opponents
+    # In other words, decide on turn 1 what mode to go into instead of at end
+# Count cards
+    # Knowing what cards you are holding in hand affects the odds of an
+    # opponent lying
+# In-game strategy changes
+    # A player who loses a block_steal can never block a steal that game
+    # A player who takes income on turn 1 probably doesn't have a duke
+    # etc...
+# Watch for overfitting
+    # An agent specifically designed to beat a specific other agent is unlikely
+    # to be successful generally
+
+    
+
 class Player_JoeyD:
     def __init__(self, name="joeyd"):
         self.name = name
@@ -24,10 +40,9 @@ class Player_JoeyD:
             self.memory = {}
             self.memory["games"] = []
             self.memory["opponents"] = {}
-        if(random.randint(0,9) == 0):
-            self.mode = "cannon"
-        else:
-            self.mode = "normal"
+        
+
+        self.mode = "normal"
     
     def react(self, hint):
         game_dict = Couptils.log_to_game_dict(self.log)
@@ -79,7 +94,40 @@ class Player_JoeyD:
                 if action == "foreign_aid":
                     if "duke" in self.cards:
                         return "block"
-                
+            else:
+                action = "block_"+game_dict["this_turn"]["action"]
+            
+            
+            if (self.mode == "cannon" and
+                action in Couptils.challengeable_actions):
+                return "challenge"
+            
+            
+            # decide whether to challenge
+            if game_dict["this_turn"]["blocker"] is not None:
+                action_in_question = "block_"+game_dict["this_turn"]["action"]
+                actor_in_question = game_dict["this_turn"]["blocker"]
+            else:
+                action_in_question = game_dict["this_turn"]["action"]
+                actor_in_question = game_dict["this_turn"]["actor"]
+            
+            try:
+                shortcut = (self.memory["opponents"]
+                                       [actor_in_question]
+                                       ["challenged"]
+                                       [action_in_question])
+                odds_of_truth = shortcut["won"]/shortcut["total"]
+                if odds_of_truth < 0.5:
+                    challenge_it = True
+                else:
+                    challenge_it = False
+                    # print("joeyD calculates and will not challenge this.")
+            except KeyError:
+                challenge_it = False
+                # print("joeyD has no information to go off of")
+            if challenge_it == True:
+                return "challenge"
+            
                 
             return "pass"
         else:
@@ -104,6 +152,13 @@ class Player_JoeyD:
         self.log += message
         self.log += "\n"
         if message[:7] == "winner:":
+            cannon_roll = random.randint(0,9)
+            if(cannon_roll == 0):
+                self.mode = "cannon"
+            else:
+                self.mode = "normal"
+
+
             game_dict = Couptils.log_to_game_dict(self.log)
             self.memory["games"].append(game_dict)
             

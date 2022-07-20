@@ -1,12 +1,18 @@
-players: [beef, me]
-beef tax
-me challenge
-beef discard assassin
+players: [joeyd, me]
+joeyd income
 me tax
-beef income
-me tax
-beef assassinate me
+joeyd assassinate me
 me block_assassinate
-me coup beef
-beef discard assassin
+me tax
+joeyd income
+me coup joeyd
+joeyd discard contessa
+joeyd income
+me tax
+joeyd income
+me tax
+joeyd assassinate me
+me block_assassinate
+me coup joeyd
+joeyd discard assassin
 winner: me
