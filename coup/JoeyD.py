@@ -67,6 +67,7 @@ class Player_JoeyD:
             
             
         elif hint in ["discard", "placeback"]:
+            # TODO: is there something to optimize here?
             discard_me = self.cards[0]
             return discard_me
         

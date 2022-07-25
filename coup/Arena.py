@@ -10,6 +10,7 @@ import Markus
 import Trey
 import Beef
 import JoeyD
+import Abe
 
 gm = Coup.Game_Master()
 
@@ -18,9 +19,10 @@ boo = Trey.Player_Trey("boo")
 markus = Markus.Player_Markus()
 beef = Beef.Player_Beef()
 joeyd = JoeyD.Player_JoeyD()
+abe = Abe.Player_Abe()
 
 
-players = [joeyd, beef]
+players = [joeyd, abe]
 
 
 wincounts = {}
