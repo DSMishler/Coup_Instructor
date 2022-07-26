@@ -53,6 +53,8 @@ class Player_JoeyD:
             if "assassin" in self.cards:
                 if self.coins >= 3:
                     return "assassinate " + target
+                # TODO: this can be a liability if you run into a player who
+                #       you know isn't lying about a contessa
             
             if self.coins >= 7:
                 return "coup " + target
@@ -62,7 +64,58 @@ class Player_JoeyD:
                 return "tax"
             
             
+            # If I'm playing like a cannon, let's tax anyway
+            if self.mode == "cannon":
+                # In a 1v1, record it in my memory
+                if len(game_dict["players"].keys()) == 2:
+                    for player in game_dict["players"].keys():
+                        if player != self.name:
+                            other_player = player
+                    # pcd: short for player challenges_me data
+                    pcd = (self.memory["opponents"]
+                                      [other_player]
+                                      ["challenges_me"])
+                    action = "tax"
+                    try:
+                        pcd[action]
+                    except KeyError:
+                        pcd[action] = {
+                            "total": 0,
+                            "challenged": 0,
+                            "lied": 0,
+                            "caught": 0
+                            }
+                    
+                    pcd[action]["lied"] += 1
+                return "tax"
             
+            # Now, even if I'm not playing like a cannon, let's see if I think
+            # I can get away with a tax
+            if len(game_dict["players"].keys()) == 2:
+                for player in game_dict["players"].keys():
+                    if player != self.name:
+                        other_player = player
+                # pcd: short for player challenges_me data
+                pcd = (self.memory["opponents"]
+                                  [other_player]
+                                  ["challenges_me"])
+                action = "tax"
+                try:
+                    pcd[action]
+                except KeyError:
+                    pcd[action] = {
+                        "total": 0,
+                        "challenged": 0,
+                        "lied": 0,
+                        "caught": 0
+                        }
+                
+                # If the other guy catches me less than 1/4 of the time...
+                if pcd[action]["caught"] <= pcd[action]["lied"] // 4:
+                    pcd[action]["lied"] += 1
+                    return "tax"
+                
+                    
             return "income"
             
             
@@ -95,6 +148,64 @@ class Player_JoeyD:
                 if action == "foreign_aid":
                     if "duke" in self.cards:
                         return "block"
+                
+                # If JoeyD gets here, he cannot feasibly block this action.
+                # If I'm playing like a cannon, sometimes block anyway and see
+                # what happens
+                if (self.mode == "cannon" and
+                  action in Couptils.blockable_actions):
+                    if random.randint(1,2) == 1:
+                        # In a 1v1, record it in my memory
+                        if len(game_dict["players"].keys()) == 2:
+                            for player in game_dict["players"].keys():
+                                if player != self.name:
+                                    other_player = player
+                            # pcd: short for player challenges_me data
+                            pcd = (self.memory["opponents"]
+                                              [other_player]
+                                              ["challenges_me"])
+                            action = "block_"+action
+                            try:
+                                pcd[action]
+                            except KeyError:
+                                pcd[action] = {
+                                    "total": 0,
+                                    "challenged": 0,
+                                    "lied": 0,
+                                    "caught": 0
+                                    }
+                            
+                            pcd[action]["lied"] += 1
+                            
+                        return "block"
+                # Else I'm in normal mode. But if I won't get caught blocking,
+                # I'll block...
+                if (len(game_dict["players"].keys()) == 2 and
+                  action in Couptils.blockable_actions):
+                    for player in game_dict["players"].keys():
+                        if player != self.name:
+                            other_player = player
+                    # pcd: short for player challenges_me data
+                    pcd = (self.memory["opponents"]
+                                      [other_player]
+                                      ["challenges_me"])
+                    action = "block_"+action
+                    try:
+                        pcd[action]
+                    except KeyError:
+                        pcd[action] = {
+                            "total": 0,
+                            "challenged": 0,
+                            "lied": 0,
+                            "caught": 0
+                            }
+                    
+                    
+                    # If the other guy catches me less than 1/4 of the time...
+                    if pcd[action]["caught"] <= pcd[action]["lied"] // 4:
+                        pcd[action]["lied"] += 1
+                        return "block"
+                                        
             else:
                 action = "block_"+game_dict["this_turn"]["action"]
             
@@ -152,18 +263,12 @@ class Player_JoeyD:
     def receive(self, message):
         self.log += message
         self.log += "\n"
-        if message[:7] == "winner:":
-            cannon_roll = random.randint(0,9)
-            if(cannon_roll == 0):
-                self.mode = "cannon"
-            else:
-                self.mode = "normal"
-
-
-            game_dict = Couptils.log_to_game_dict(self.log)
-            self.memory["games"].append(game_dict)
+        if message[:8] == "players:":
+            # TODO: decide if I know the players well and should try to 
+            #       go normal more often
             
             # Add all the players to memory if they're not already there.
+            game_dict = Couptils.log_to_game_dict(self.log)
             for player in game_dict["players"].keys():
                 if player == self.name:
                     continue
@@ -172,11 +277,83 @@ class Player_JoeyD:
                 except KeyError:
                     self.memory["opponents"][player] = {
                         "challenged" : {},
+                        "challenges_me" : {},
                         "turn1": {"total": 0}
                     }
+                
+            cannon_roll = random.randint(0,9)
+            if(cannon_roll == 0):
+                self.mode = "cannon"
+            else:
+                self.mode = "normal"
+                
+        if message[:7] == "winner:":
+            # Do bookkeeping to remember the data from the previous game.
+            game_dict = Couptils.log_to_game_dict(self.log)
+            # TODO: maybe put this thing back if I *need* it, but for now it's
+            # just making things slower
+            # self.memory["games"].append(game_dict)
+        
             
-            for turn in game_dict["turns"]:
-                # For all the challenges
+            if len(game_dict["players"].keys()) == 2:
+                for player in game_dict["players"].keys():
+                    if player != self.name:
+                        other_player = player
+                for turn in game_dict["turns"]:
+                    # For everything JoeyD did that could be challenged, and
+                    # each other player in the game
+                    # Note: this data is only collected for 1v1s
+                    if (turn["actor"] == self.name and
+                      turn["action"] in Couptils.challengeable_actions):
+                        # JoeyD did an action that could be challenged
+                        action = turn["action"]
+                    elif turn["blocker"] == self.name:
+                        action = "block_"+turn["action"]
+                    else:
+                        continue # nothing of interest this turn
+                        
+                        
+                    # pcd: short for player challenges_me data
+                    pcd = (self.memory["opponents"]
+                                      [other_player]
+                                      ["challenges_me"])
+                    try:
+                        pcd[action]
+                    except KeyError:
+                        pcd[action] = {
+                            "total": 0,
+                            "challenged": 0,
+                            "lied": 0,
+                            "caught": 0
+                            }
+                    
+                    # TODO: remove the extraneous try-excepts
+                    
+                    # Add 1 to the total
+                    try:
+                        pcd[action]["total"] += 1
+                    except KeyError:
+                        pcd[action]["total"] = 1
+                        
+                    # If they challeged, add 1 to the times they challenged
+                    if turn["challenger"] == other_player:
+                        try:
+                            pcd[action]["challenged"] += 1
+                        except KeyError:
+                            pcd[action]["challenged"] = 1
+                    
+                    # If they won, add 1 to the times they caught me
+                    if turn["challenger_win"] == True:
+                        try:
+                            pcd[action]["caught"] += 1
+                        except KeyError:
+                            pcd[action]["caught"] = 1
+                    
+                        
+                    
+                
+            for turn in game_dict["turns"]:        
+                # For all the times an opponent was challenged by anyone
                 if turn["challenger"] is not None:
                     # who was challenged? The blocker or the actor?
                     if turn["blocker"] is not None:
@@ -185,9 +362,12 @@ class Player_JoeyD:
                     else:
                         challenged_player = turn["actor"]
                         challenged_action = turn["action"]
-                    
+                        
+                    # If I, JoeyD, was challenged, ignore it.
                     if challenged_player == self.name:
-                        continue # just focus on opponents for now
+                        continue
+                    
+
                     
                     
                     # Now add in the data that the player was challenged doing
