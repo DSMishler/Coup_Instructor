@@ -36,7 +36,7 @@ turn_actions = [
     "assassinate"
     ]
 
-
+# TODO: woah, why is Beef sometimes lying about assassins?
 class Player_Beef:
     def __init__(self, name="beef"):
         self.name = name

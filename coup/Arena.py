@@ -11,6 +11,9 @@ import Trey
 import Beef
 import JoeyD
 import Abe
+import Beefiest
+import flyswatter
+import lazy_sullivan
 
 gm = Coup.Game_Master()
 
@@ -20,9 +23,12 @@ markus = Markus.Player_Markus()
 beef = Beef.Player_Beef()
 joeyd = JoeyD.Player_JoeyD()
 abe = Abe.Player_Abe()
+beefiest = Beefiest.Player_Beefiest()
+flyswatter = flyswatter.Flyswatter()
+sullivan = lazy_sullivan.lsPlayer()
 
 
-players = [joeyd, markus, beef, abe]
+players = [beefiest, sullivan]
 
 
 wincounts = {}

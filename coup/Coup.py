@@ -202,6 +202,7 @@ class Game_Master:
             # If all were legal, fall through. Else go back to start, and
             # ask again
             if not legal:
+                print(self.log)
                 print("illegal action: " + message)
                 if not action_exists:
                     print("reason: that action isn't possible in Coup.")
