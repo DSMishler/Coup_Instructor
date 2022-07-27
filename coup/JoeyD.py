@@ -23,8 +23,15 @@ import pickle
 # Watch for overfitting
     # An agent specifically designed to beat a specific other agent is unlikely
     # to be successful generally
+# Tail between legs...
+    # If you got challenged doing something and lost, don't do it again.
 
-    
+joeyd_card_priority = [
+    "ambassador",
+    "assassin",
+    "captain",
+    "contessa",
+    "duke"]
 
 class Player_JoeyD:
     def __init__(self, name="joeyd"):
@@ -123,15 +130,23 @@ class Player_JoeyD:
                 if pcd[action]["caught"] <= pcd[action]["lied"] // 4:
                     pcd[action]["lied"] += 1
                     return "tax"
-                
+            if len(game_dict["players"].keys()) > 2:
+                # We don't income in FFA, who do you think we are?
+                # Note: it's silly to challenge taxes in FFA, but a bot who
+                #       does choose to do it will shut JoeyD out of the game
+                #       with this choice.
+                return "tax"
                     
             return "income"
             
             
         elif hint in ["discard", "placeback"]:
-            # TODO: is there something to optimize here?
-            discard_me = self.cards[0]
-            return discard_me
+            for consideration in joeyd_card_priority:
+                for card in self.cards:
+                    if card == consideration:
+                        return card
+            # If we made it here, there's an error
+            return "?"
         
         elif hint == "challenged":
             if game_dict["this_turn"]["blocker"] is None:
@@ -141,7 +156,14 @@ class Player_JoeyD:
             for card in self.cards:
                 if action in Couptils.card_abilities[card]:
                     return card
-            return self.cards[0]
+                
+            # If I lost, just discard something according to card probability
+            for consideration in joeyd_card_priority:
+                for card in self.cards:
+                    if card == consideration:
+                        return card
+                    
+            return "?"
         
         elif hint == "cb?":
             # decide whether to block
@@ -288,10 +310,7 @@ class Player_JoeyD:
     def receive(self, message):
         self.log += message
         self.log += "\n"
-        if message[:8] == "players:":
-            # TODO: decide if I know the players well and should try to 
-            #       go normal more often
-            
+        if message[:8] == "players:":          
             # Add all the players to memory if they're not already there.
             game_dict = Couptils.log_to_game_dict(self.log)
             for player in game_dict["players"].keys():
@@ -321,9 +340,6 @@ class Player_JoeyD:
         if message[:7] == "winner:":
             # Do bookkeeping to remember the data from the previous game.
             game_dict = Couptils.log_to_game_dict(self.log)
-            # TODO: maybe put this thing back if I *need* it, but for now it's
-            # just making things slower
-            # self.memory["games"].append(game_dict)
         
             
             if len(game_dict["players"].keys()) == 2:
