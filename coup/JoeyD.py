@@ -50,11 +50,20 @@ class Player_JoeyD:
             # Can I assassinate or coup?
             target = self.find_active_target(game_dict)
 
-            if "assassin" in self.cards:
-                if self.coins >= 3:
+            if "assassin" in self.cards and self.coins >= 3:
+                # JoeyD likes to use his assassins, but if he has seen it not
+                # work in the past, he won't do it.
+                condition_to_assassinate = True
+                for turn in game_dict["turns"]:
+                    if turn["actor"] == self.name: # It was my turn
+                        if turn["action"] == "assassinate": # I assassinated
+                            if turn["blocker"] is not None: # Someone blocked
+                                if turn["challenger"] is None: #None challenged
+                                    condition_to_assassinate = False
+                                    break
+                if condition_to_assassinate == True:
                     return "assassinate " + target
-                # TODO: this can be a liability if you run into a player who
-                #       you know isn't lying about a contessa
+
             
             if self.coins >= 7:
                 return "coup " + target
@@ -153,7 +162,8 @@ class Player_JoeyD:
                 # If I'm playing like a cannon, sometimes block anyway and see
                 # what happens
                 if (self.mode == "cannon" and
-                  action in Couptils.blockable_actions):
+                  action in Couptils.blockable_actions and
+                  (target == self.name or target is None)):
                     if random.randint(1,2) == 1:
                         # In a 1v1, record it in my memory
                         if len(game_dict["players"].keys()) == 2:
@@ -181,7 +191,8 @@ class Player_JoeyD:
                 # Else I'm in normal mode. But if I won't get caught blocking,
                 # I'll block...
                 if (len(game_dict["players"].keys()) == 2 and
-                  action in Couptils.blockable_actions):
+                  action in Couptils.blockable_actions and
+                  (target == self.name or target is None)):
                     for player in game_dict["players"].keys():
                         if player != self.name:
                             other_player = player
@@ -229,18 +240,29 @@ class Player_JoeyD:
                                        ["challenged"]
                                        [action_in_question])
                 odds_of_truth = shortcut["won"]/shortcut["total"]
-                if odds_of_truth < 0.5:
+                if len(game_dict["players"].keys()) == 2:
+                    players_modifier = 1
+                elif len(game_dict["players"].keys()) == 3:
+                    players_modifier = 0.5
+                else:
+                    players_modifier = 0.1
+                if odds_of_truth <= 0.5 * players_modifier:
                     challenge_it = True
                 else:
                     challenge_it = False
-                    # print("joeyD calculates and will not challenge this.")
             except KeyError:
                 challenge_it = False
-                # print("joeyD has no information to go off of")
+                # JoeyD has no information to go off of
             if challenge_it == True:
                 return "challenge"
             
-                
+            
+            # Finally, before I pass, I have to ask: should I hail mary?
+            if game_dict["this_turn"]["target"] == self.name:
+                if game_dict["this_turn"]["action"] == "assassinate":
+                    if len(self.cards) == 1:
+                        return "block" # Hail-mary block
+                    
             return "pass"
         else:
             print("error: unknown hint for reaction!")
@@ -251,12 +273,15 @@ class Player_JoeyD:
     def find_active_target(self, game_dict):
         players_array = list(game_dict["players"].keys())
         random.shuffle(players_array)
+        players_array.remove(self.name)
+        target = None # target the player with lowest cards
         for player in players_array:
-            if player == self.name:
-                continue
             if game_dict["players"][player]["cards"] != 0:
-                target = player
-                break
+                if target is None:
+                    target = player
+                if (game_dict["players"][player]["cards"] <
+                  game_dict["players"][target]["cards"]):
+                    target = player
         
         return target
                 
@@ -280,9 +305,15 @@ class Player_JoeyD:
                         "challenges_me" : {},
                         "turn1": {"total": 0}
                     }
-                
-            cannon_roll = random.randint(0,9)
-            if(cannon_roll == 0):
+            
+            if len(game_dict["players"].keys()) == 2:
+                cannon_odds = 10
+            elif len(game_dict["players"].keys()) == 3:
+                cannon_odds = 20
+            else:
+                cannon_odds = 50
+            cannon_roll = random.randint(1,cannon_odds)
+            if(cannon_roll == 1):
                 self.mode = "cannon"
             else:
                 self.mode = "normal"
@@ -327,27 +358,17 @@ class Player_JoeyD:
                             "caught": 0
                             }
                     
-                    # TODO: remove the extraneous try-excepts
                     
                     # Add 1 to the total
-                    try:
-                        pcd[action]["total"] += 1
-                    except KeyError:
-                        pcd[action]["total"] = 1
+                    pcd[action]["total"] += 1
                         
                     # If they challeged, add 1 to the times they challenged
                     if turn["challenger"] == other_player:
-                        try:
-                            pcd[action]["challenged"] += 1
-                        except KeyError:
-                            pcd[action]["challenged"] = 1
+                        pcd[action]["challenged"] += 1
                     
                     # If they won, add 1 to the times they caught me
                     if turn["challenger_win"] == True:
-                        try:
-                            pcd[action]["caught"] += 1
-                        except KeyError:
-                            pcd[action]["caught"] = 1
+                        pcd[action]["caught"] += 1
                     
                         
                     
@@ -366,9 +387,7 @@ class Player_JoeyD:
                     # If I, JoeyD, was challenged, ignore it.
                     if challenged_player == self.name:
                         continue
-                    
-
-                    
+                                        
                     
                     # Now add in the data that the player was challenged doing
                     # this. Add a new category if need be.

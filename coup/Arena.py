@@ -22,7 +22,7 @@ joeyd = JoeyD.Player_JoeyD()
 abe = Abe.Player_Abe()
 
 
-players = [joeyd, markus]
+players = [joeyd, abe, markus, beef]
 
 
 wincounts = {}
